@@ -3,8 +3,12 @@
 **PACT** — **P**ragmatic, **A**gent-**C**ontrolled, **T**erminal-based.
 
 A spec-driven software-engineering methodology delivered as a Claude Code plugin.
-This document is the implementation reference. It is the source of truth for what
-PACT is and how each part behaves. Nothing here is implemented yet.
+
+This document is the **design reference** — the rationale, the internals, and the
+contract each part must honor. For **usage** — install, every command's syntax,
+the configuration reference, walkthroughs, and FAQ — see the [README](../README.md).
+The two do not repeat each other: the README tells you how to drive PACT, this
+tells you why it is shaped the way it is.
 
 > **Language rule.** This repository, and everything PACT writes to disk in a
 > project (specs, plans, the constitution, decision records, commit messages, PR
@@ -30,8 +34,9 @@ spec  →  plan  →  build  →  ship
   dependency-ordered parallel waves.
 - **ship** — a conventional commit, a pull request, issue links, a merge.
 
-Everything else PACT provides — `init`, `review`, `fix`, `status`, `check`,
-`config`, `adr`, `migrate` — is support around that spine.
+Everything else PACT provides — `init`, `design`, `team`, `review`, `fix`,
+`security`, `status`, `check`, `config`, `adr`, `migrate` — is support around
+that spine.
 
 ### Philosophy
 
@@ -60,18 +65,20 @@ Everything else PACT provides — `init`, `review`, `fix`, `status`, `check`,
 
 ---
 
-## 2. Distribution & installation
+## 2. Distribution & rationale
 
-**Plugin only.** No npm CLI.
+**Plugin only.** No npm CLI. The public repository *is* the marketplace. The
+install and update commands, and the dormant-when-not-opted-in behavior, are in
+the [README](../README.md#install). This section covers the reasoning behind that
+shape.
 
-```bash
-/plugin marketplace add <owner>/pact
-/plugin install pact@pact
-```
+### Why plugin-only
 
-Per-project opt-in is written by `pact init` into the project's
-`.claude/settings.json` (`enabledPlugins`). Without that entry the plugin stays
-dormant in the project.
+A CLI would need its own install path, its own update story, and a second surface
+to keep in sync with the skills. The plugin mechanism already gives per-project
+opt-in (`enabledPlugins`), atomic updates, and one place for skills, agents,
+hooks, and scripts. The cost — no portability — is one PACT already accepts
+(§1 non-goals).
 
 ### Stability commitment
 
@@ -84,18 +91,14 @@ dormant in the project.
 
 ### Publishing & releases
 
-There is no central store. The public repo **is** the marketplace: `.claude-plugin/`
-holds `plugin.json` (`name: "pact"`, `version`, …) and `marketplace.json` (one
-entry, `name: "pact"`, `source: "./"`). Users add it with
-`/plugin marketplace add <owner>/pact` and install `pact@pact`
-(`<plugin>@<marketplace>`).
-
-A release: bump `version` in `plugin.json` (+ `marketplace.json` if duplicated) and
-`CHANGELOG.md`; bump the `schema` template value only when `.pact/` layout changes
-(major only for breaking); then `git tag vX.Y.Z && git push --tags &&
-gh release create vX.Y.Z`. `marketplace.json` tracks the latest tag. Users update
-with `/plugin update pact@pact` (then restart the session);
-`/plugin marketplace update pact` first if marketplace metadata changed.
+There is no central store — the public repo *is* the marketplace (`.claude-plugin/`
+holds `plugin.json` and a `marketplace.json` with one entry, `source: "./"`). The
+release procedure is automated by the repo-local `release` skill and summarized
+for users in the [README](../README.md#updating--releases). The design constraint:
+a release bumps the `schema` template value **only** when the `.pact/` layout
+changes, and only a major version when that change is breaking to an existing
+project — so `pact migrate` always has a defined, tested path from any older
+schema.
 
 ### Idle token cost
 
@@ -1182,100 +1185,9 @@ Per-project opt-in via `.claude/settings.json` `enabledPlugins`, written by
 
 ## 23. Walkthroughs
 
-### Existing project (ADOPT)
-
-```
-cd my-existing-app          # code, package.json, tests, docker-compose.yml, README
-
-/pact:init
-  detects ADOPT; scans pnpm + NestJS + Next + docker-compose + workflows; finds README, CONTRIBUTING
-  Bloc 1  communication + flow: full
-  Bloc 3  project.md pre-filled from README + code; user confirms the tech→role map
-  Bloc 2  detected commands confirmed; isolation = docker-compose
-  Bloc 4  github detected, gh authed, target main, pr_per spec
-  Bloc 5  constitution on, review on, team off, design_docs off, issue_tracking on
-  Bloc 6  charter drafted from observed conventions (Vitest 80% floor, feature-folders,
-          named exports, lodash banned); user tweaks
-  writes .pact/, tasks/, docs/, .gitignore block, .claude/settings.json; appends CLAUDE.md
-
-/pact:spec feat "rate-limit the public API"
-  agent drafts, asks clarifications one at a time (per-IP or per-key? limit + window? 429 body?)
-
-/pact:plan docs/specs/2026-…_api-rate-limit/spec.md
-  two-pass: 1 epic "Rate limiting", 3 stories (01-01 middleware+config, 01-02 Redis store,
-  01-03 429 responses+headers); user approves the breakdown; stories detailed; tasks/ written
-
-/pact:build                     (mode prompt → wave)
-  wave 1: 01-01 + 01-02 in parallel worktrees (docker compose -p pact_w1 / pact_w2), TDD each
-  merge into spec branch, full test green
-  wave 2: 01-03 (blocked_by 01-01) inline
-  batched verification gate: curl the endpoint, observe 429 after N requests
-
-/pact:review                    → PASS
-/pact:ship
-  preflight, push spec/SP-001-…, PR → main with "Closes #42", CI green, squash merge,
-  delivery: merged, proposes a project.md patch ("Redis = rate-limit counters") → user confirms
-```
-
-### New project (NEW)
-
-```
-mkdir portfolio && cd portfolio && git init
-
-/pact:init
-  detects NEW (empty)
-  Bloc 1  communication + flow: lite
-  Bloc 3  user answers: "personal portfolio, shows projects + a contact form, audience = recruiters";
-          tech→role: "Next.js = whole site + one server action"
-  Bloc 2  preset next-only → pnpm, commands filled; not containerized; isolation inline-env
-  Bloc 4  github, target main, pr_per spec
-  Bloc 5  lite → all toggles off, block skipped
-  scaffolds .pact/ (constitution.md = draft skeleton), tasks/, docs/, CLAUDE.md, .gitignore block
-
-/pact:spec feat "contact section with a working form"
-  drafts, asks: delivery mechanism (server action → email via Resend?), spam handling?
-
-/pact:plan …spec.md             (one-pass, lite default)
-  1 epic, 3 stories: form component / server action / wiring + validation + states
-
-/pact:build                     (mode → spec, lite default: runs through, hard stops only)
-  wave 1: form component + server action in parallel
-  wave 2: wiring (blocked_by both) inline
-  verification gate: Chrome-driven — fill the form, submit, see the success state
-
-/pact:ship                      → commit, push, PR → main, squash merge (no review gate in lite)
-```
-
-### Project with a PRD and other docs
-
-```
-cd saas-app        # docs/PRD.md, docs/ROADMAP.md, CLAUDE.md, ARCHITECTURE.md, scaffolding
-
-/pact:init
-  detects ADOPT
-  existing-docs scan: PRD.md, ROADMAP.md, CLAUDE.md, ARCHITECTURE.md → "Use these as source? [Y]"
-  project.md drafted FROM the PRD (capabilities, users, domain) + ARCHITECTURE.md (tech→role,
-    structure), citing Source: docs/PRD.md / docs/ARCHITECTURE.md → user confirms
-  constitution.md drafted from CLAUDE.md rules + code conventions
-  CLAUDE.md gets an appended PACT section (existing content untouched)
-  Blocs 2/4/5/7 as usual; flow → full
-  ROADMAP.md is NOT transformed — left as-is, a planning source
-
-/pact:config project expand
-  reads the PRD, proposes N spec stubs (status: draft), one per PRD feature, with depends_on
-  where the PRD implies ordering (auth before billing…); user picks SP-001 "signup + login"
-
-/pact:spec SP-001               → refine the stub into a full spec, clarifications
-/pact:plan …                   → demo-first epics: 01 = signup/login screen against a fixture auth
-                                 (runs immediately), 02 = the real auth service, 03 = Integration & E2E
-/pact:build --mode flow        → auto-chains build → review → ship, stops only when blocked;
-                                 SP-001 delivered as one PR
-
-/pact:status                   → queue: SP-002 billing (depends_on SP-001 ✓), SP-003 dashboard (✓)
-/pact:spec SP-002 …            → next spec, one at a time
-```
-
----
+Worked end-to-end examples — a new project, an existing project, and a project
+with a PRD — are in the [README](../README.md#walkthroughs). They are usage, not
+design, so they live there.
 
 ## 24. Open items
 

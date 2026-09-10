@@ -1,9 +1,9 @@
 # Changelog
 
-All notable changes to PACT are documented here. The format follows
-[Keep a Changelog](https://keepachangelog.com/), and PACT adheres to
-[Semantic Versioning](https://semver.org/). A breaking change to the on-disk
-`.pact/` layout only happens on a major version and ships a migration step.
+All notable changes to PACT are documented here. The format follows the
+Keep a Changelog convention, and PACT versions follow Semantic Versioning. A
+breaking change to the on-disk `.pact/` layout only happens on a major version
+and ships a migration step.
 
 ## [Unreleased]
 
@@ -29,5 +29,3 @@ All notable changes to PACT are documented here. The format follows
 - `release` project skill — cuts a PACT release (version bump, changelog, tag,
   GitHub Release).
 
-[Unreleased]: https://github.com/melchimaelran/pact/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/melchimaelran/pact/releases/tag/v0.1.0
