@@ -16,6 +16,7 @@
 #   env           run a [stack.env] command under the project's isolation strategy
 #   status        render the read-only dashboard
 #   check         project health report
+#   help          the command map (also: bare `pact`, `pact --help`)
 #
 # Exit codes: 0 ok, 1 error, 2 usage, 3 schema gate failed.
 
@@ -31,14 +32,17 @@ usage() {
 usage: pact <subcommand> [args]
 
   scaffold | gitignore | schema | spec-id | story | views
-  wave-plan | env | status | check
+  wave-plan | env | status | check | help
 
-Run `pact <subcommand> --help` for details.
+Run `pact <subcommand> --help` for details, or `pact help` for the command map.
 EOF
   exit 2
 }
 
-[ $# -ge 1 ] || usage
+# Bare `pact` and `pact -h|--help` render the command map.
+if [ $# -eq 0 ] || [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  exec sh "$PACT_SCRIPTS/help.sh"
+fi
 sub=$1
 shift
 

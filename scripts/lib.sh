@@ -73,3 +73,40 @@ fm_get() {
     }
   ' "$_f"
 }
+
+# Like fm_get, but for a YAML block scalar (`key: >-` / `key: |`). Returns the
+# indented continuation lines joined with single spaces. Also handles the plain
+# `key: value` form. Stops at the closing `---`, a blank line, or a line that is
+# not more-indented than the key. Usage: fm_get_block <file> <key>
+fm_get_block() {
+  _f=$1; _k=$2
+  [ -f "$_f" ] || return 0
+  awk -v k="$_k" '
+    NR==1 && $0=="---" {infm=1; next}
+    infm && $0=="---" {exit}
+    !infm {next}
+    !inblock {
+      if (match($0, "^[[:space:]]*" k "[[:space:]]*:[[:space:]]*[|>][+-]?[[:space:]]*$")) {
+        inblock=1; next
+      }
+      if (match($0, "^[[:space:]]*" k "[[:space:]]*:[[:space:]]*")) {
+        v=substr($0, RLENGTH+1)
+        sub(/[[:space:]]*#.*$/, "", v)
+        sub(/^"/, "", v); sub(/"$/, "", v)
+        sub(/^'"'"'/, "", v); sub(/'"'"'$/, "", v)
+        sub(/[[:space:]]+$/, "", v)
+        print v
+        exit
+      }
+      next
+    }
+    inblock {
+      if ($0 !~ /^[[:space:]]/ || $0 ~ /^[[:space:]]*$/) exit
+      line=$0
+      sub(/^[[:space:]]+/, "", line)
+      sub(/[[:space:]]+$/, "", line)
+      out = (out == "" ? line : out " " line)
+    }
+    END { if (out != "") print out }
+  ' "$_f"
+}

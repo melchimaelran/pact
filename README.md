@@ -54,7 +54,7 @@ A run looks like this:
 ```
 
 Then `/pact:spec <type> "..."` to start work, `/pact:status` to see where things
-stand, `/pact:check` to find what is broken.
+stand, `/pact:check` to find what is broken. `/pact:help` lists every command.
 
 ## Why PACT
 
@@ -133,8 +133,8 @@ conflicts cannot arise. Many specs can be drafted and planned concurrently.
 Each finished command offers the next as a one-click, arguments filled in. You
 say yes or no — nothing auto-chains, except `build --mode flow`, which runs
 `build -> review -> ship` straight through while nothing blocks. Anytime:
-`/pact:status`, `/pact:check`, `/pact:config`, `/pact:adr`, `/pact:security`. For
-a bug: `/pact:fix`.
+`/pact:help`, `/pact:status`, `/pact:check`, `/pact:config`, `/pact:adr`,
+`/pact:security`. For a bug: `/pact:fix`.
 
 ## Documentation
 
