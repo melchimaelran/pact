@@ -44,7 +44,7 @@ Turn `.pact/project.md` into a fuller PRD under `docs/` and, optionally, create
 `depends_on` where an ordering is implied. The user activates them one at a time
 with `pact spec <slug>`.
 
-### free text ("turn on review", "switch to squash merges", "add a banned dep")
+### free text ("turn on review", "switch to squash merges", "notify me on failures")
 
 1. Identify the target key(s) in `config.toml` / `stack.toml` / the constitution.
 2. Show the current value, propose the new one, confirm.
@@ -55,6 +55,9 @@ with `pact spec <slug>`.
    the plan.
 5. Editing the constitution bumps its version header.
 6. Changing `flow` `lite -> full` -> walk the newly-relevant toggles.
+7. Sound: "notify me" / "play a sound when it needs me" -> `[notify].sound`
+   (`attention` for waits + failures, `all` for everything); mention `method`
+   (`auto` | `bell` | `command`) and that `PACT_NOTIFY=off` mutes it.
 
 ## Hard gates
 

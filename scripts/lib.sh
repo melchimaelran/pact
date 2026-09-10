@@ -28,6 +28,25 @@ pact_toml_get() {
     | sed 's/^"//; s/"$//; s/[[:space:]]*#.*$//; s/[[:space:]]*$//'
 }
 
+# Read `key = value` from inside a `[section]` of a .pact/*.toml file. Handles the
+# nested keys `pact_toml_get` (flat only) misses. Usage: pact_toml_get_in <file> <section> <key>
+pact_toml_get_in() {
+  _f=$1; _s=$2; _k=$3
+  [ -f "$_f" ] || return 1
+  awk -v s="[$_s]" -v k="$_k" '
+    $0 == s { ins=1; next }
+    /^[[:space:]]*\[/ { ins=0 }
+    ins && match($0, "^[[:space:]]*" k "[[:space:]]*=[[:space:]]*") {
+      v = substr($0, RLENGTH + 1)
+      sub(/[[:space:]]*#.*$/, "", v)
+      sub(/^"/, "", v); sub(/"$/, "", v)
+      sub(/^'"'"'/, "", v); sub(/'"'"'$/, "", v)
+      sub(/[[:space:]]+$/, "", v)
+      print v; exit
+    }
+  ' "$_f"
+}
+
 # The project's declared .pact schema number (default 0 when unset/absent).
 pact_schema() {
   d=$(pact_dir) || { echo 0; return; }

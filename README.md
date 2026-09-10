@@ -112,6 +112,12 @@ model tiers. Switch any time with `/pact:config`.
 New spec branches are cut from an up-to-date target branch, so cross-spec merge
 conflicts cannot arise. Many specs can be drafted and planned concurrently.
 
+**Sound, if you want it.** Off by default. `/pact:config` turns it on
+(*"notify me on failures"* → only waits and failures, or everything) and off
+again the same way — so you can start a long parallel build and walk away.
+Backgrounded, zero model tokens, never blocks a turn. `PACT_NOTIFY=off` mutes it
+without touching the config.
+
 ## The workflow
 
 ```

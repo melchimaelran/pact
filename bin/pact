@@ -17,6 +17,7 @@
 #   status        render the read-only dashboard
 #   check         project health report
 #   help          the command map (also: bare `pact`, `pact --help`)
+#   notify        play a short sound for an event (hooks + skills; config-gated)
 #
 # Exit codes: 0 ok, 1 error, 2 usage, 3 schema gate failed.
 
@@ -32,7 +33,7 @@ usage() {
 usage: pact <subcommand> [args]
 
   scaffold | gitignore | schema | spec-id | story | views
-  wave-plan | env | status | check | help
+  wave-plan | env | status | check | help | notify
 
 Run `pact <subcommand> --help` for details, or `pact help` for the command map.
 EOF

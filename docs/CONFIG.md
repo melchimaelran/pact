@@ -44,6 +44,9 @@ covers the commands.
 | `team.depth` | `basic` `standard` `max` | how many expert/guide skills to generate |
 | `team.context7` | bool | fetch version-specific framework docs (token cost) |
 | `design.system` | `auto` `claude-design` `none` | UI design source — `auto` uses the official frontend-design plugin if present, else `.pact/design.md` |
+| `notify.sound` | `off` `attention` `all` | play a sound so you can step away — `off`; `attention` = only input waits and failures; `all` = also each turn end and settled build wave |
+| `notify.method` | `auto` `bell` `command` | `auto` = a system sound if one is found, else the terminal bell; `bell` forces the bell; `command` runs `notify.command` |
+| `notify.command` | string | for `method = command` — a shell line run per event, with `{event}` (`done` `wait` `wave` `fail`) substituted |
 
 ---
 
@@ -157,3 +160,44 @@ pact-wt/
 - **`PreToolUse`** (while `ship`, `build`, `fix`, `spec` run) — blocks any
   `git` / `gh` command carrying an AI-authorship trailer or footer. It matches
   the trailer forms only.
+- **`Stop`** and **`Notification`** — play a sound (`scripts/notify.sh`) when a
+  turn finishes and when PACT is waiting on you. Off unless `notify.sound` is
+  set. Backgrounded, silent, never fails a turn. `build` and `review` also call
+  `pact notify` when a wave settles or an escalation needs you. See below.
+
+---
+
+## Sound notifications
+
+A short sound so you can start a long parallel `build` and step away. **Off by
+default** — nothing plays until you turn it on.
+
+**Turn on** — either:
+
+- `/pact:config` in a session: *"turn on sounds"*, *"notify me on failures"*,
+  *"play a sound when it needs me"*; or
+- set `notify.sound` in `.pact/config.toml` (via `/pact:config` — never
+  hand-edited):
+  - `attention` — only when PACT needs you: input waits and failures.
+  - `all` — also each turn end and each settled build wave.
+
+**Turn off** — set `notify.sound = "off"` (again through `/pact:config`), or
+mute without editing the file by exporting `PACT_NOTIFY=off` (useful in CI or a
+headless run — it overrides the config wherever it is set).
+
+**Events:** `done` (turn end), `wait` (permission prompt or idle), `wave` (a
+build wave settled), `fail` (QA loop exhausted, unresolvable conflict, review
+`NEEDS_FIXES`, failed verification gate).
+
+**How it plays** — `notify.method`:
+
+- `auto` (default) — a system sound if one is found (freedesktop on Linux,
+  `/System/Library/Sounds` on macOS), otherwise the terminal bell (1–4 beats by
+  event).
+- `bell` — always the terminal bell.
+- `command` — run `notify.command` once per event, with `{event}` substituted
+  (e.g. `notify.command = "osascript -e 'display notification \"PACT {event}\"'"`).
+
+Zero model tokens: the hooks and the `pact notify` calls are deterministic
+scripts. `notify.sh` is backgrounded and always exits 0, so it can never delay
+or fail a turn.

@@ -102,7 +102,7 @@ For each wave (respecting the execution mode's pause points):
    the remaining spec.
 6. **Wave test** — `pact env test`. Green -> record it against the spec-branch
    SHA. Red -> QA loop (max 3) then escalate, or roll back the wave.
-7. `pact views` once, after the wave settles.
+7. `pact views` once, after the wave settles, then `pact notify wave`.
 
 ## Phase 6 — verification gate (batched)
 
@@ -130,7 +130,8 @@ show the wave plan and stop.
 
 **Hard stops override every mode:** the verification gate, QA escalation after 3
 iterations, an unresolvable `manual` conflict, `review` NEEDS FIXES that is not
-auto-fixable, a destructive-action confirmation, human PR approval.
+auto-fixable, a destructive-action confirmation, human PR approval. Run
+`pact notify fail` when a hard stop hands control back to the user.
 
 ## Hard gates
 
