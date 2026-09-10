@@ -310,12 +310,16 @@ finding exists. Read-only.
 /pact:config show                       print the current settings
 /pact:config statusline install         install the main status line
 /pact:config project expand             turn project.md into a fuller PRD (+ spec stubs)
-/pact:config <what to change>           free text — e.g. "turn on review", "squash merges"
+/pact:config <what to change>           free text — e.g. "turn on review", "squash merges", "turn on sounds"
 ```
 
 The conversational editor for `.pact/config.toml`, `.pact/stack.toml`, and the
 constitution. You never hand-edit those files. Turning a step on offers the
 matching backfill; editing the constitution bumps its version.
+
+Sound notifications are off by default; `/pact:config` turns them on or off
+(*"notify me on failures"* → `attention`, *"turn off sounds"* → `off`). Details
+in [`CONFIG.md`](CONFIG.md#sound-notifications).
 
 ---
 

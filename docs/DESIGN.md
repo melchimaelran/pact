@@ -1090,7 +1090,8 @@ Current spec + slug · stories done/total · current story + its acceptance crit
 - **`Stop` / `Notification`** (`scripts/notify.sh`, zero tokens): a short sound
   on turn end and when PACT is waiting on the user. Off by default
   (`[notify].sound = off`); `attention` restricts it to input waits and
-  failures, `all` adds turn end and settled build waves. `build` and `review`
+  failures, `all` adds turn end and settled build waves. Toggled on and off
+  through `/pact:config` like any other setting. `build` and `review`
   also invoke `pact notify wave|fail` at those checkpoints. Plays a system sound
   if one is found, else the terminal bell; `method = command` hands off to a
   user shell line. Backgrounded, always exits 0 — it can never delay or fail a

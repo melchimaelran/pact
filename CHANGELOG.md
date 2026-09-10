@@ -22,10 +22,11 @@ that on-disk layout only happens on a major version.
   exhausted, unresolvable conflict, review `NEEDS_FIXES`, failed verification
   gate). New `Stop` / `Notification` hooks plus `pact notify` calls from `build`
   and `review`, all via `scripts/notify.sh` — backgrounded, zero model tokens,
-  can never delay or fail a turn. Off by default; opt in with `[notify].sound`
-  (`attention` = waits + failures, `all` = everything), `[notify].method`
-  (`auto` system sound / terminal `bell` / your own `command`). `PACT_NOTIFY=off`
-  mutes it everywhere. The `[notify]` block is optional — no schema bump.
+  can never delay or fail a turn. Off by default; turn it on and off any time
+  through `/pact:config` — `[notify].sound` (`attention` = waits + failures,
+  `all` = everything), `[notify].method` (`auto` system sound / terminal `bell`
+  / your own `command`). `PACT_NOTIFY=off` mutes it everywhere without editing
+  the config. The `[notify]` block is optional — no schema bump.
 
 ### Changed
 - README restructured as a pitch-first entry point (~190 lines). The exhaustive
