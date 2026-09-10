@@ -7,10 +7,8 @@ This README is the user manual: what PACT is, how to install it, and every
 command, flag, setting, and file. For the design rationale and the internals, see
 [`docs/DESIGN.md`](docs/DESIGN.md).
 
-> **Status: early.** All 15 commands are implemented and the deterministic engine
-> (scaffolding, wave planning, view generation, health checks) is tested end to
-> end. The model-driven flows have not yet had a full real-world run. Expect
-> rough edges in the prompts.
+PACT is in `0.x` — the framework evolves between releases. See the
+[CHANGELOG](CHANGELOG.md) for what each version changes.
 
 ---
 
