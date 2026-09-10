@@ -11,6 +11,13 @@ that on-disk layout only happens on a major version.
 
 ## [Unreleased]
 
+### Added
+- **`/pact:help`** — the command map. `/pact:help` lists every command grouped
+  by pipeline / optional layer / anytime, each with its syntax and description,
+  plus the `spec -> plan -> build -> ship` spine; `/pact:help <command>` prints
+  one command's syntax and full description. Script-rendered (`scripts/help.sh`),
+  zero model tokens, works before `/pact:init`. The command count is now 16.
+
 ### Changed
 - README restructured as a pitch-first entry point (~190 lines). The exhaustive
   command reference moved to `docs/COMMANDS.md`, the configuration reference to

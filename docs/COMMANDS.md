@@ -9,6 +9,28 @@ the design rationale, see [`DESIGN.md`](DESIGN.md).
 
 ---
 
+## `pact help`
+
+```
+/pact:help [<command>]
+```
+
+The command map. With no argument it prints every command grouped by where it
+sits in the flow — the pipeline (`init`, `spec`, `plan`, `build`, `ship`), the
+optional layers (`design`, `team`, `review`), and the anytime commands — each
+with its invocation and description, plus the `spec -> plan -> build -> ship`
+spine and pointers to this file, `CONFIG.md`, and the README.
+
+Given a command name it prints just that command's syntax and full description,
+e.g. `/pact:help build`.
+
+Script-rendered, zero model tokens, read-only. Does not gate on schema — it works
+before `/pact:init` and while a `pact migrate` is pending. Also runs as
+`pact help` (or bare `pact`) in a terminal; `pact help --list` prints the command
+names, one per line.
+
+---
+
 ## `pact init`
 
 ```

@@ -185,10 +185,11 @@ a time, as work is decided — not dumped upfront. Day one is `pact init` →
 
 ---
 
-## 4. Command set (15 — 11 core + 4 optional/utility)
+## 4. Command set (16 — 11 core + 5 optional/utility)
 
 | Command | Role |
 |---|---|
+| `pact help` | The command map. Script-rendered, zero model tokens; works before `init` and while a migrate is pending. |
 | `pact init` | Initial configuration + scaffold (NEW / ADOPT / RECONFIG). |
 | `pact spec` | Typed spec — the entry point for all work. |
 | `pact design` | *Optional* (`steps.design_docs`). Spec → feature-scoped architecture docs. |
@@ -1164,7 +1165,7 @@ pact/                       github.com/<owner>/pact — MIT
 ├── .claude-plugin/
 │   ├── marketplace.json    # declares the marketplace
 │   └── plugin.json         # name, version, description, author
-├── skills/<cmd>/SKILL.md   # init, spec, design, team, plan, build, review, ship, fix, security, status, check, config, adr, migrate
+├── skills/<cmd>/SKILL.md   # help, init, spec, design, team, plan, build, review, ship, fix, security, status, check, config, adr, migrate
 │   └── <cmd>/references/*.md
 ├── agents/
 │   ├── story-implementer.md
