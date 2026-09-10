@@ -1,0 +1,51 @@
+#!/bin/sh
+# pact — deterministic dispatcher for the PACT plugin.
+#
+# Skills call `pact <subcommand> [args]` for anything countable, renderable, or
+# mechanical. No model tokens are spent here. Each subcommand is a script under
+# ../scripts/.
+#
+# Subcommands (implemented per build stage):
+#   scaffold      write the .pact/ layout + tasks/ + docs/ skeleton
+#   gitignore     ensure the managed .gitignore block
+#   schema        print the project's .pact schema, or gate against a version
+#   spec-id       print the next free SP-NNN
+#   story         set/read story frontmatter, then regenerate views
+#   views         regenerate STORIES_INDEX / FEATURE_INDEX / decisions index
+#   wave-plan     compute dependency-ordered waves for the active spec
+#   env           run a [stack.env] command under the project's isolation strategy
+#   status        render the read-only dashboard
+#   check         project health report
+#
+# Exit codes: 0 ok, 1 error, 2 usage, 3 schema gate failed.
+
+set -eu
+
+PACT_BIN_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PACT_ROOT=$(CDPATH= cd -- "$PACT_BIN_DIR/.." && pwd)
+PACT_SCRIPTS="$PACT_ROOT/scripts"
+export PACT_ROOT PACT_SCRIPTS
+
+usage() {
+  cat >&2 <<'EOF'
+usage: pact <subcommand> [args]
+
+  scaffold | gitignore | schema | spec-id | story | views
+  wave-plan | env | status | check
+
+Run `pact <subcommand> --help` for details.
+EOF
+  exit 2
+}
+
+[ $# -ge 1 ] || usage
+sub=$1
+shift
+
+script="$PACT_SCRIPTS/$sub.sh"
+if [ ! -f "$script" ]; then
+  echo "pact: unknown subcommand '$sub'" >&2
+  usage
+fi
+
+exec sh "$script" "$@"
