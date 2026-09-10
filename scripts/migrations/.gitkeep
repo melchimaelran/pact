@@ -1,0 +1,3 @@
+# Migration steps go here as NNNN-<slug>.sh, one per schema bump.
+# Each takes the project root as $1 and must be idempotent.
+# Schema 1 is the initial version — no steps yet.
