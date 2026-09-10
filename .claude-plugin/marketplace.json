@@ -1,0 +1,15 @@
+{
+  "name": "pact",
+  "owner": {
+    "name": "melchimaelran",
+    "url": "https://github.com/melchimaelran"
+  },
+  "plugins": [
+    {
+      "name": "pact",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Spec-driven software-engineering methodology: spec -> plan -> build -> ship, with TDD, dependency-ordered parallel waves, decision records, and an on-demand security audit."
+    }
+  ]
+}
