@@ -34,6 +34,7 @@ the spec + `project.md` + the code directly.
 
 | Command | Role |
 |---|---|
+| `pact help` | The command map + the spine. Script-rendered, zero model tokens. |
 | `pact fix` | Bug flow: diagnose -> failing test -> Fix Plan -> `build` (bug-fix mode). |
 | `pact security` | On-demand security audit -> security-fix spec stubs. Never auto-runs. |
 | `pact status` | Read-only dashboard. Script-rendered, zero model tokens. |
