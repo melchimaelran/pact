@@ -1,31 +1,45 @@
 # Changelog
 
 All notable changes to PACT are documented here. The format follows the
-Keep a Changelog convention, and PACT versions follow Semantic Versioning. A
-breaking change to the on-disk `.pact/` layout only happens on a major version
-and ships a migration step.
+Keep a Changelog convention, and PACT versions follow Semantic Versioning.
+
+PACT is in `0.x`: the framework — prompts, flows, skill wording — changes freely
+between releases, and every `0.x` release is a pre-release. The on-disk `.pact/`
+**schema** is a separate track — it only bumps when the layout of files a project
+keeps changes, and each such bump ships a migration step. A breaking change to
+that on-disk layout only happens on a major version.
 
 ## [Unreleased]
 
-### Added
-- All 15 command skills: `init`, `spec`, `design`, `team`, `plan`, `build`,
-  `review`, `ship`, `fix`, `security`, `status`, `check`, `config`, `adr`,
-  `migrate`.
-- Five subagents: `story-implementer`, `qa-validator`, `conflict-analyzer`,
-  `reviewer`, `security-auditor`.
-- Deterministic engine (`bin/pact` + `scripts/`): `schema`, `gitignore`,
-  `scaffold`, `spec-id`, `views`, `wave-plan`, `env`, `story`, `green`,
-  `status`, `check`, `adr-id`, `migrate`, plus the `session-start`, `format`,
-  `no-ai-guard`, and status-line hooks.
-- Eight shared contracts under `references/`.
-- `config.toml` / `stack.toml` schema at `schema = 1`.
-
 ## [0.1.0] — 2026-09-10
 
-### Added
-- `docs/DESIGN.md` — the full design and implementation reference.
-- Plugin packaging scaffold: `.claude-plugin/plugin.json`,
-  `.claude-plugin/marketplace.json`.
-- `release` project skill — cuts a PACT release (version bump, changelog, tag,
-  GitHub Release).
+First working release. The full spine and its support commands are implemented;
+the deterministic engine is tested end to end.
 
+### Added
+- **Commands (15):** `init`, `spec`, `design`, `team`, `plan`, `build`, `review`,
+  `ship`, `fix`, `security`, `status`, `check`, `config`, `adr`, `migrate` —
+  each as a `skills/<name>/SKILL.md`.
+- **Subagents (5):** `story-implementer`, `qa-validator`, `conflict-analyzer`,
+  `reviewer`, `security-auditor`, each with a typed return schema.
+- **Deterministic engine:** `bin/pact` dispatcher plus `scripts/` — `schema`,
+  `gitignore`, `scaffold`, `spec-id`, `views`, `wave-plan`, `env`, `story`,
+  `green`, `status`, `check`, `adr-id`, `migrate`, and `adr-id`; the
+  `session-start`, `format`, `no-ai-guard`, `statusline`, and
+  `subagent-statusline` hook scripts.
+- **Shared contracts (`references/`):** workflow map, state model, subagent
+  fan-out, wave orchestration, decision records, constitution, reuse-first,
+  skill anatomy.
+- **State model:** story-file frontmatter as the single source of truth;
+  generated read-only index views; `status` × `delivery` axes.
+- **Flow:** `spec` (typed) → `plan` (demo-first vertical epics, one-format
+  stories) → `build` (TDD waves, git worktrees, rehearsal merge, conflict
+  analysis, execution modes `step`/`wave`/`spec`/`flow`/`dry`) → `ship` (commit,
+  PR, issues, merge). `lite` / `full` modes.
+- **Always on:** TDD RED-before-GREEN, the reuse-first redundancy scan, the QA
+  loop, Decision Records, the no-AI-references commit guard.
+- **Config:** `.pact/config.toml` + `.pact/stack.toml`, `schema = 1`, edited only
+  through `init` / `config`.
+- **Hooks:** `SessionStart` state line, `PostToolUse` formatter, `PreToolUse`
+  AI-reference guard while `ship` / `build` / `fix` / `spec` run.
+- **Docs:** `README.md` (the user manual), `docs/DESIGN.md` (design reference).

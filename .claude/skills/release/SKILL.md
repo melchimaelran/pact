@@ -51,33 +51,46 @@ All must hold, or stop and report which failed:
 6. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` exist and
    parse.
 
+## Pre-1.0 model
+
+PACT is in `0.x`. The framework — prompts, flows, skill wording — churns freely
+between `0.x` releases and that is expected; those changes are a **minor** bump
+(`0.1.0 -> 0.2.0`), a **patch** for fixes and doc-only changes. The `.pact/`
+on-disk **schema** is a separate track: it only bumps when the layout of files a
+project keeps under `.pact/` / `tasks/` / `docs/specs/` actually changes, and
+each such bump ships a `scripts/migrations/NNNN-*.sh` step. A framework change
+that does not alter that on-disk layout needs **no** schema bump and **no**
+migration, however large it is. Every `0.x` release is a GitHub **pre-release**.
+
 ## Phase 1 — resolve the new version
 
 - Read the current version from `.claude-plugin/plugin.json`.
 - From `$ARGUMENTS`:
-  - `patch` / `minor` / `major` → bump that part of the current version.
+  - `patch` / `minor` / `major` → bump that part of the current version. In
+    `0.x`, `major` means `0.y.z -> 0.(y+1).0` only if the maintainer explicitly
+    wants to signal a large break; normal breaking framework changes are still
+    `minor`. Do not go to `1.0.0` without an explicit `1.0.0` argument.
   - an explicit `X.Y.Z` → use it verbatim (must be greater than current).
-  - empty → ask the maintainer: patch, minor, or major, and show what each
-    resolves to. Offer the three plus a free-text `X.Y.Z`.
+  - empty → ask: patch, minor, or major, showing what each resolves to, plus a
+    free-text `X.Y.Z`.
 - **Schema check.** Resolve the last tag with `git describe --tags --abbrev=0`
-  (none yet on a first release — skip this check then). If anything under the
-  `.pact/` layout or the config schema changed since that tag
-  (`git diff <last-tag> -- docs/DESIGN.md scripts/migrations/` and the config
-  templates), require:
-  - a migration step present under `scripts/migrations/`, and
-  - a `major` bump if the change is breaking to an existing `.pact/` project.
-  If that is not satisfied, stop and explain what is missing.
+  (none yet on a first release — skip this check then). If
+  `git diff <last-tag> -- scripts/migrations/ skills/init/templates/` shows the
+  `.pact/` on-disk layout changed, require a matching
+  `scripts/migrations/NNNN-*.sh` step and that `PACT_SUPPORTED_SCHEMA` in
+  `scripts/lib.sh` was bumped. A framework-only change (SKILL bodies, references,
+  scripts other than migrations, docs) needs neither — do not block it.
 
 ## Phase 2 — apply the version
 
 - Edit `version` in `.claude-plugin/plugin.json`.
 - Edit `version` in `.claude-plugin/marketplace.json` (the entry under `plugins`).
 - In `CHANGELOG.md`: move everything under `## [Unreleased]` into a new
-  `## [X.Y.Z] — YYYY-MM-DD` section (today's date), leave `## [Unreleased]` empty,
-  and update the link-reference lines at the bottom
-  (`[Unreleased]` compare link + a new `[X.Y.Z]` tag link).
+  `## [X.Y.Z] — <date +%F>` section, leave `## [Unreleased]` empty.
 - If `## [Unreleased]` was empty, ask the maintainer for a one-line summary of
   what this release contains and put it under `### Changed` before proceeding.
+- No link-reference lines at the bottom of the changelog — this repo keeps it
+  link-free.
 
 ## Phase 3 — commit, tag, push
 
@@ -93,17 +106,22 @@ All must hold, or stop and report which failed:
 
 - Build the release notes from the new `## [X.Y.Z]` CHANGELOG section (strip the
   heading, keep the body).
-- `gh release create vX.Y.Z --title "vX.Y.Z" --notes "<notes>"`.
-- If this is the first-ever release, add `--latest`.
+- While the version is `0.x`: `gh release create vX.Y.Z --title "vX.Y.Z"
+  --notes "<notes>" --prerelease --latest`.
+- At `1.0.0` and after: drop `--prerelease`.
 
 ## Hard gates
 
-- Never release from a branch other than `main`.
+- Never release from a branch other than `main`, or from a repo whose `origin`
+  is not `melchimaelran/pact`.
 - Never release with a dirty tree.
 - Never skip the CHANGELOG roll.
 - Never push the tag or create the Release without explicit maintainer
   confirmation in this run.
-- A `.pact/` layout change without a migration step blocks the release.
+- A change to the `.pact/` **on-disk layout** without a matching migration step
+  and a `PACT_SUPPORTED_SCHEMA` bump blocks the release. A framework-only change
+  does not.
+- Never publish `1.0.0` unless the maintainer passed `1.0.0` explicitly.
 
 ## Completion report
 
