@@ -49,3 +49,29 @@ pact_schema_gate() {
 }
 
 pact_die() { echo "pact: $*" >&2; exit 1; }
+
+# Read one key from a markdown file's YAML frontmatter (the block between the
+# first two `---` lines). Usage: fm_get <file> <key>. Strips quotes and inline
+# `# comments`. Prints nothing if absent.
+fm_get() {
+  _f=$1; _k=$2
+  [ -f "$_f" ] || return 0
+  awk -v k="$_k" '
+    NR==1 && $0=="---" {infm=1; next}
+    infm && $0=="---" {exit}
+    infm {
+      line=$0
+      if (match(line, "^[[:space:]]*" k "[[:space:]]*:[[:space:]]*")) {
+        v=substr(line, RLENGTH+1)
+        sub(/[[:space:]]*#.*$/, "", v)
+        sub(/^"/, "", v); sub(/"$/, "", v)
+        sub(/^'"'"'/, "", v); sub(/'"'"'$/, "", v)
+        sub(/[[:space:]]+$/, "", v)
+        print v
+        exit
+      }
+    }
+  ' "$_f"
+}
+
+# Read a markdown H1-less body section? (not needed yet)
