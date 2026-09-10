@@ -73,5 +73,3 @@ fm_get() {
     }
   ' "$_f"
 }
-
-# Read a markdown H1-less body section? (not needed yet)

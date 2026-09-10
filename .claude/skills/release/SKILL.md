@@ -10,6 +10,7 @@ argument-hint: "patch | minor | major | X.Y.Z"
 allowed-tools: >-
   Read Edit
   Bash(git status*) Bash(git branch*) Bash(git symbolic-ref*) Bash(git rev-parse*)
+  Bash(git remote get-url*) Bash(git describe*)
   Bash(git fetch*) Bash(git log*) Bash(git diff*) Bash(git add*) Bash(git commit*)
   Bash(git tag*) Bash(git push*)
   Bash(gh auth status*) Bash(gh repo view*) Bash(gh release create*) Bash(gh release view*)
@@ -39,11 +40,15 @@ Open a `TodoWrite` list with one item per phase below and update it as you go.
 
 All must hold, or stop and report which failed:
 
-1. `gh auth status` succeeds.
-2. Current branch is `main` (`git symbolic-ref --short HEAD`).
-3. Working tree is clean (`git status --porcelain` empty).
-4. `git fetch origin` then `main` is not behind `origin/main`.
-5. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` exist and
+1. **This is the PACT repository.** `git remote get-url origin` ends with
+   `melchimaelran/pact` (`.git` optional). If not, refuse — this skill only ever
+   releases the PACT plugin itself, never a project that happens to have a copy
+   of it.
+2. `gh auth status` succeeds.
+3. Current branch is `main` (`git symbolic-ref --short HEAD`).
+4. Working tree is clean (`git status --porcelain` empty).
+5. `git fetch origin` then `main` is not behind `origin/main`.
+6. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` exist and
    parse.
 
 ## Phase 1 — resolve the new version

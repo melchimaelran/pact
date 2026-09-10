@@ -21,17 +21,39 @@ mkdir -p "$root/.pact" \
 [ -f "$root/tasks/.gitkeep" ] || : > "$root/tasks/.gitkeep"
 
 # --- .claude/settings.json enabledPlugins -----------------------------------
+# Never risk corrupting the user's Claude Code settings. Use a real JSON editor
+# when one is available; otherwise leave the file untouched and tell the user the
+# one line to add.
 mkdir -p "$root/.claude"
 s="$root/.claude/settings.json"
+
+json_editor=''
+if command -v python3 >/dev/null 2>&1; then json_editor=python3
+elif command -v node >/dev/null 2>&1; then json_editor=node
+fi
+
 if [ ! -f "$s" ]; then
   printf '{\n  "enabledPlugins": {\n    "pact@pact": true\n  }\n}\n' > "$s"
-elif ! grep -q '"pact@pact"' "$s"; then
-  # naive insert: add the key into an existing enabledPlugins object, or add the object
-  if grep -q '"enabledPlugins"' "$s"; then
-    sed -i.bak 's/"enabledPlugins"[[:space:]]*:[[:space:]]*{/"enabledPlugins": {\n    "pact@pact": true,/' "$s" && rm -f "$s.bak"
-  else
-    sed -i.bak 's/^{/{\n  "enabledPlugins": { "pact@pact": true },/' "$s" && rm -f "$s.bak"
-  fi
+elif grep -q '"pact@pact"' "$s"; then
+  : # already enabled
+elif [ "$json_editor" = python3 ]; then
+  python3 - "$s" <<'PY' || echo "pact: could not update $s automatically — add \"pact@pact\": true under enabledPlugins" >&2
+import json, sys
+p = sys.argv[1]
+d = json.load(open(p))
+d.setdefault("enabledPlugins", {})["pact@pact"] = True
+json.dump(d, open(p, "w"), indent=2)
+open(p, "a").write("\n")
+PY
+elif [ "$json_editor" = node ]; then
+  node -e '
+    const fs=require("fs"), p=process.argv[1];
+    const d=JSON.parse(fs.readFileSync(p,"utf8"));
+    (d.enabledPlugins ||= {})["pact@pact"]=true;
+    fs.writeFileSync(p, JSON.stringify(d,null,2)+"\n");
+  ' "$s" || echo "pact: could not update $s automatically — add \"pact@pact\": true under enabledPlugins" >&2
+else
+  echo "pact: no json tool (python3/node) found — add \"pact@pact\": true under enabledPlugins in $s by hand" >&2
 fi
 
 # --- CLAUDE.md PACT section -------------------------------------------------

@@ -62,3 +62,8 @@ Anything countable, renderable, or mechanical — numbering, wave planning, view
 regeneration, dashboards, status, resource allocation, health checks — runs in
 `scripts/*.sh` and is invoked via `bin/pact <subcommand>`, never reasoned out by
 the model.
+
+The plugin's `bin/` directory is on `PATH` for a skill's Bash calls, so a bare
+`pact <subcommand>` resolves to `bin/pact`. A skill's `allowed-tools` lists
+`Bash(pact *)` so those calls are pre-approved for the turn. If a host does not
+put `bin/` on `PATH`, fall back to `"${CLAUDE_PLUGIN_ROOT}/bin/pact" <subcommand>`.
