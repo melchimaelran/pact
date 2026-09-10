@@ -19,6 +19,17 @@ pact init  ->  pact spec  ->  pact plan  ->  pact build  ->  pact review  ->  pa
 - `review` — feature-level audit. Runs only when `steps.review` is on.
 - `ship` — commit, PR, issue links, merge.
 
+## Optional layer commands
+
+Run only when their `[steps]` toggle is on. Off -> `plan` and `build` work from
+the spec + `project.md` + the code directly.
+
+| Command | When | Role |
+|---|---|---|
+| `pact design` | `steps.design_docs` | spec -> feature-scoped architecture docs, between `spec` and `plan`. |
+| `pact team` | `steps.team` | derive project-tailored expert / guide skills into `.claude/skills/`. |
+| `pact review` | `steps.review` | feature-level audit between `build` and `ship`. |
+
 ## Support commands
 
 | Command | Role |

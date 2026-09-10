@@ -179,18 +179,20 @@ a time, as work is decided — not dumped upfront. Day one is `pact init` →
 
 ---
 
-## 4. Command set (13)
+## 4. Command set (15 — 11 core + 4 optional/utility)
 
 | Command | Role |
 |---|---|
 | `pact init` | Initial configuration + scaffold (NEW / ADOPT / RECONFIG). |
 | `pact spec` | Typed spec — the entry point for all work. |
+| `pact design` | *Optional* (`steps.design_docs`). Spec → feature-scoped architecture docs. |
+| `pact team` | *Optional* (`steps.team`). Derive project-tailored expert / guide skills. |
 | `pact plan` | Spec → epics / stories (skipped for trivial `chore` / `docs`). |
 | `pact build` | Implement — inline, parallel waves, or a whole epic. |
-| `pact review` | Feature-level audit before shipping. |
+| `pact review` | *Optional* (`steps.review`). Feature-level audit before shipping. |
 | `pact ship` | Commit + PR + issue links + merge. |
 | `pact fix` | Bug flow (diagnose → failing test → fix plan → build). |
-| `pact security` | On-demand security audit → generates security-fix spec stubs (never auto-runs, never auto-fixes). |
+| `pact security` | On-demand security audit → security-fix spec stubs (never auto-runs, never auto-fixes). |
 | `pact status` | Read-only dashboard (rendered by script, zero model tokens). |
 | `pact check` | Project health report; names the fix for each finding. |
 | `pact config` | Conversational editor for config, stack, charter; `statusline install`; `project expand`. |
@@ -1156,7 +1158,7 @@ pact/                       github.com/<owner>/pact — MIT
 ├── .claude-plugin/
 │   ├── marketplace.json    # declares the marketplace
 │   └── plugin.json         # name, version, description, author
-├── skills/<cmd>/SKILL.md   # init, spec, plan, build, review, ship, fix, security, status, check, config, adr, migrate
+├── skills/<cmd>/SKILL.md   # init, spec, design, team, plan, build, review, ship, fix, security, status, check, config, adr, migrate
 │   └── <cmd>/references/*.md
 ├── agents/
 │   ├── story-implementer.md
