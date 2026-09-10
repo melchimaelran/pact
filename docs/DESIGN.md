@@ -107,6 +107,28 @@ implementation: keep every `description` to one tight sentence; register PACT
 skills as **deferred** (loaded on demand) so the idle cost approaches zero; gate
 skill exposure on `.pact/` presence if the platform allows it.
 
+### Per-run token economy
+
+The design keeps a working run lean by construction:
+
+- **Shared context is read once.** The orchestrator loads `project.md`,
+  `constitution.md`, `stack.toml`, and relevant DRs a single time and passes them
+  into each wave agent's prompt; agents never re-read them (§9).
+- **A green test run is recorded against a SHA and reused.** `build` runs the
+  suite to green; `review` and `ship` do not re-run an identical suite — only when
+  the branch moved, or when `[review].fresh_suite` asks for it (§10, §11).
+- **Deterministic work is scripts, not the model.** Wave planning, index
+  regeneration, dashboards, status, resource allocation — zero model tokens.
+- **Index views regenerate once per wave**, plus on `build` exit — not per story.
+- **One decision, one DR.** A phase checks the DR index before proposing; no
+  duplicate proposals across `spec` / `plan` / `build` / `review` (§12).
+- **Progress tracking only where it earns its cost** — long multi-phase commands,
+  not short linear ones (§21).
+- **Optional layers are off by default.** `design_docs`, `team`, `review` are
+  opt-in; `lite` is the four-command spine with none of them. No mandatory
+  architecture-doc or expert-skill generation.
+- **Reference files are few and dense** (6–8), each read at most once per run.
+
 ---
 
 ## 3. Core concepts
@@ -328,10 +350,11 @@ model_fast = "haiku"; model_balanced = "sonnet"; model_advanced = "opus"
 effort = "high"
 
 [review]
-effort   = "standard"   # quick | standard | deep
-model    = "auto"       # auto | haiku | fable | sonnet | opus
-passes   = 1
-auto_fix = "low"        # off | low | low+medium
+effort       = "standard"   # quick | standard | deep
+model        = "auto"       # auto | haiku | fable | sonnet | opus
+passes       = 1
+auto_fix     = "low"        # off | low | low+medium
+fresh_suite  = false        # re-run the full test suite even when build's green still holds (default true in full)
 
 [spec]
 effort = "high"
@@ -645,7 +668,13 @@ Computed by `pact wave-plan` — a script, zero model tokens:
 3. Cut the spec branch `spec/<SP-id>-<slug>` from `main` (this is also the
    rehearsal branch — safe, because spec-level serialization means a bad wave
    rolls back without affecting anything else, and the branch is not merged).
-4. For each wave:
+4. **Load shared context once.** The orchestrator reads `project.md`,
+   `constitution.md`, `stack.toml`, and the relevant `accepted` DRs a single time
+   and passes them **verbatim** in each dispatch prompt as read-only context. A
+   `story-implementer` never re-reads those files — it reads only story-specific
+   files and the code it touches. (A wave of 5 stories reads the shared context
+   once, not five times.)
+5. For each wave:
    - One git worktree + one `story-implementer` subagent per story (or inline if
      the wave holds one). Worktrees are named `pact-wt/<wave>/<story-id>` in a
      sibling directory; `setup` runs once per worktree; `[workflow].max_parallel`
@@ -660,7 +689,14 @@ Computed by `pact wave-plan` — a script, zero model tokens:
      of the remaining spec.
    - Run the full `test` suite on the spec branch after the wave merges. Green →
      wave done. Red → QA loop (max 3) or roll back the wave.
-5. All waves green → the batched verification gate → ready for `review` / `ship`.
+   - Regenerate the index views **once, after the wave settles** — not per story.
+6. All waves green → the batched verification gate → ready for `review` / `ship`.
+   The views are also regenerated on every `build` exit (success or clean
+   interrupt), so they never lag by more than an in-flight wave.
+
+The full `test` run that ends a green wave is recorded against the spec-branch
+SHA. `review` and `ship` reuse that record instead of re-running an identical
+suite (see §10, §11).
 
 Worktrees are removed and `git worktree prune` runs on wave success; kept with a
 pointer on failure. Orphan worktrees from an interrupted run are cleaned or
@@ -720,6 +756,13 @@ A feature-level audit of the whole spec — every story together — before `shi
 Runs after `build` (all waves green + verification gate) when `steps.review` is on.
 Runs in an isolated subagent context.
 
+`review` does **not** re-run the test suite by default: `build` already ran it to
+green against the current spec-branch SHA, and re-running an identical suite is
+wasted tokens. It re-runs only if the branch SHA moved since that record, or if
+`[review].fresh_suite` is set (default `false` in `lite`, `true` in `full`).
+`review` focuses on what a per-story `build` pass structurally cannot see —
+cross-story integration and spec-level coverage.
+
 Checks:
 
 1. Every spec acceptance criterion is test-covered **and** fulfilled — PASS / FAIL
@@ -729,7 +772,8 @@ Checks:
 3. Whole-spec-diff code review: SOLID, feature-level redundancy, edge cases,
    security, error handling.
 4. Design fidelity, if UI and a design system is present.
-5. Test suite green · no `skip` / `only` tests · coverage vs the charter floor.
+5. Suite status from the recorded green (or a fresh run per the rule above) · no
+   `skip` / `only` tests · coverage vs the charter floor.
 
 Output: a report, findings by severity (CRITICAL / HIGH / MEDIUM / LOW), verdict
 **PASS / NEEDS FIXES**.
@@ -812,7 +856,9 @@ codebase by this command.
 
 1. **Pre-check** — spec at `status: ready`, all stories `done`, `review` green if
    `review_gate`.
-2. **Preflight** — re-run `lint` + `test` on the spec branch if `preflight` is on.
+2. **Preflight** — if `preflight` is on, re-run `lint` + `test` on the spec branch
+   **only when its HEAD moved** since the green recorded by `build` / `review`.
+   When HEAD is unchanged, skip with "already verified at `<sha>`".
 3. **Commit** — conventional style; per-story commits already exist from `build`;
    a final synthesis commit if needed.
 4. **Push** the `spec/<SP-id>-<slug>` branch.
@@ -874,8 +920,11 @@ Rules:
 Auto-proposed by `spec` / `plan` / `build` / `review` when a decision has real
 alternatives **and** is hard to reverse, or cross-feature, or contradicts /
 extends `project.md` or the constitution. Below that threshold — a local, easily
-changed choice — nothing is written (reuse-first: no ceremony). A declined
-proposal leaves a one-line trace in the story's `## Notes`. Manual creation:
+changed choice — nothing is written (reuse-first: no ceremony). Before proposing,
+a phase checks the DR index (`docs/decisions/README.md`): if a `proposed` or
+`accepted` DR already covers the decision area, it is **not** re-proposed — one
+decision, one DR, regardless of how many phases touch it. A declined proposal
+leaves a one-line trace in the story's `## Notes`. Manual creation:
 `pact adr "…"`.
 
 ---
@@ -1074,8 +1123,11 @@ relevant.
    X, stop and recommend the right command.
 3. **Reuse-first note** — read existing context, reuse before rebuilding, simplest
    viable approach.
-4. **Progress tracking** — open a `TodoWrite` list, one todo per phase, update as
-   you go.
+4. **Progress tracking** — a `TodoWrite` list, one todo per phase, updated as you
+   go — **only for the long multi-phase commands** (`plan`, `build`, `review`,
+   `security`, `migrate`). The short linear commands (`spec`, `ship`, `status`,
+   `check`, `config`, `adr`) skip it; it costs tool calls without adding a "where
+   am I" the user needs.
 5. **Phase 0: schema gate** — read `.pact/config.toml` `schema`; a mismatch blocks
    and offers `pact migrate`.
 6. **Phases 1..N** — the work, numbered, each with a goal, steps, and an exit gate.
@@ -1091,6 +1143,8 @@ Bulky templates and examples live in `skills/<name>/references/*.md`, loaded on
 demand, read at most once per run. Shared contracts live in repo-root
 `references/*.md` (state model, wave orchestration, subagent fan-out, DR, charter,
 reuse-first, skill invocation, workflow map) — skills link to them, never restate.
+Target **6–8 dense reference files**, not one per topic — every file a skill may
+load is a recurring read, so consolidation is a direct token saving.
 
 ---
 
