@@ -5,10 +5,13 @@
 A spec-driven software-engineering methodology delivered as a Claude Code plugin.
 
 This document is the **design reference** — the rationale, the internals, and the
-contract each part must honor. For **usage** — install, every command's syntax,
-the configuration reference, walkthroughs, and FAQ — see the [README](../README.md).
-The two do not repeat each other: the README tells you how to drive PACT, this
-tells you why it is shaped the way it is.
+contract each part must honor. It does not repeat the usage docs:
+
+- [`../README.md`](../README.md) — the pitch, the quickstart, the concepts.
+- [`COMMANDS.md`](COMMANDS.md) — every command's syntax and behavior, plus
+  worked walkthroughs.
+- [`CONFIG.md`](CONFIG.md) — every configuration key, the files PACT creates, the
+  hooks, the status line.
 
 > **Language rule.** This repository, and everything PACT writes to disk in a
 > project (specs, plans, the constitution, decision records, commit messages, PR
@@ -69,7 +72,7 @@ that spine.
 
 **Plugin only.** No npm CLI. The public repository *is* the marketplace. The
 install and update commands, and the dormant-when-not-opted-in behavior, are in
-the [README](../README.md#install). This section covers the reasoning behind that
+the [README](../README.md#quickstart) and [CONFIG.md](CONFIG.md). This section covers the reasoning behind that
 shape.
 
 ### Why plugin-only
@@ -94,7 +97,7 @@ hooks, and scripts. The cost — no portability — is one PACT already accepts
 There is no central store — the public repo *is* the marketplace (`.claude-plugin/`
 holds `plugin.json` and a `marketplace.json` with one entry, `source: "./"`). The
 release procedure is automated by the repo-local `release` skill and summarized
-for users in the [README](../README.md#updating--releases). The design constraint:
+for users in the [README](../README.md#updating). The design constraint:
 a release bumps the `schema` template value **only** when the `.pact/` layout
 changes, and only a major version when that change is breaking to an existing
 project — so `pact migrate` always has a defined, tested path from any older
@@ -1186,7 +1189,7 @@ Per-project opt-in via `.claude/settings.json` `enabledPlugins`, written by
 ## 23. Walkthroughs
 
 Worked end-to-end examples — a new project, an existing project, and a project
-with a PRD — are in the [README](../README.md#walkthroughs). They are usage, not
+with a PRD — are in [COMMANDS.md](COMMANDS.md#walkthroughs). They are usage, not
 design, so they live there.
 
 ## 24. Open items

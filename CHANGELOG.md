@@ -11,6 +11,11 @@ that on-disk layout only happens on a major version.
 
 ## [Unreleased]
 
+### Changed
+- README restructured as a pitch-first entry point (~190 lines). The exhaustive
+  command reference moved to `docs/COMMANDS.md`, the configuration reference to
+  `docs/CONFIG.md`.
+
 ## [0.1.0] — 2026-09-10
 
 First working release. The full spine and its support commands are implemented;
