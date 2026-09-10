@@ -1,0 +1,33 @@
+# PACT stack + environment. Managed by `/pact:config` — do not hand-edit.
+
+[stack]
+languages       = [{{LANGUAGES}}]      # e.g. "typescript", "python"
+frameworks      = [{{FRAMEWORKS}}]     # e.g. "nestjs", "nextjs"
+package_manager = "{{PACKAGE_MANAGER}}"
+runtime         = "{{RUNTIME}}"        # e.g. node@22, python@3.12
+monorepo        = {{MONOREPO}}
+
+[env]
+containerized = {{CONTAINERIZED}}
+compose_file  = "{{COMPOSE_FILE}}"
+isolation     = "{{ISOLATION}}"        # auto | docker-compose | inline-env | serialize
+setup     = "{{ENV_SETUP}}"
+test      = "{{ENV_TEST}}"
+test_one  = "{{ENV_TEST_ONE}}"         # {path} = the targeted file
+lint      = "{{ENV_LINT}}"
+typecheck = "{{ENV_TYPECHECK}}"        # "" = skip
+build     = "{{ENV_BUILD}}"
+dev       = "{{ENV_DEV}}"
+format    = "{{ENV_FORMAT}}"           # "" = no PostToolUse formatting
+
+# monorepo only — one block per independently-built package:
+# [stack.packages.api]
+# path = "apps/api"
+# test = "pnpm --filter api test"
+
+[vcs]
+platform       = "{{VCS_PLATFORM}}"    # github | gitlab | gitea | local
+default_branch = "{{DEFAULT_BRANCH}}"
+has_gh_cli     = {{HAS_GH_CLI}}
+project_board  = {{PROJECT_BOARD}}
+min_approvals  = {{MIN_APPROVALS}}

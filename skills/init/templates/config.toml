@@ -1,0 +1,57 @@
+# PACT project configuration. Managed by `/pact:config` — do not hand-edit.
+schema = 1
+
+[language]
+technical     = "en"          # fixed, non-editable
+communication = "{{COMMUNICATION_LANG}}"   # en|fr|es|de|pt|it|ja|zh|ko|<free text>
+
+[mode]
+flow = "{{FLOW}}"             # lite | full
+
+[steps]
+constitution   = {{STEP_CONSTITUTION}}
+review         = {{STEP_REVIEW}}
+team           = {{STEP_TEAM}}
+design_docs    = {{STEP_DESIGN_DOCS}}
+issue_tracking = {{STEP_ISSUE_TRACKING}}   # github only
+
+[workflow]
+pr_per             = "{{PR_PER}}"          # spec | story
+merge_strategy     = "{{MERGE_STRATEGY}}"  # squash | merge | rebase
+commit_style       = "{{COMMIT_STYLE}}"    # conventional | simple
+branch_prefix      = "story/"
+preflight          = {{PREFLIGHT}}
+review_gate        = {{REVIEW_GATE}}
+ci_gate            = false
+deploy_prompt      = "{{DEPLOY_PROMPT}}"   # on-merge | manual | none
+confirm_story_plan = false
+manual_gate        = "{{MANUAL_GATE}}"     # drive | steps | off
+max_parallel       = 4
+default_exec_mode  = "{{DEFAULT_EXEC_MODE}}"  # step | wave | spec | flow | dry
+
+[build]
+model_fast     = "haiku"
+model_balanced = "sonnet"
+model_advanced = "opus"
+effort         = "high"
+
+[review]
+effort      = "{{REVIEW_EFFORT}}"   # quick | standard | deep
+model       = "auto"
+passes      = 1
+auto_fix    = "low"                 # off | low | low+medium
+fresh_suite = {{REVIEW_FRESH_SUITE}}
+
+[spec]
+effort = "high"
+
+[plan]
+effort       = "high"
+confirmation = "{{PLAN_CONFIRMATION}}"   # two-pass | one-pass
+
+[team]
+depth    = "standard"   # basic | standard | max
+context7 = {{TEAM_CONTEXT7}}
+
+[design]
+system = "{{DESIGN_SYSTEM}}"   # auto | claude-design | none
