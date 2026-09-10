@@ -11,6 +11,8 @@ that on-disk layout only happens on a major version.
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-09-10
+
 ### Added
 - **`/pact:help`** — the command map. `/pact:help` lists every command grouped
   by pipeline / optional layer / anytime, each with its syntax and description,
