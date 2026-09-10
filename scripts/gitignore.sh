@@ -11,6 +11,7 @@ BEGIN='# --- PACT (managed) ---'
 END='# --- end PACT ---'
 BLOCK="$BEGIN
 .pact/wave.lock
+.pact/green
 .pact/cache/
 .pact/tmp/
 pact-wt/
@@ -39,7 +40,7 @@ if grep -qF "$BEGIN" "$gi"; then
   awk -v b="$BEGIN" '
     {print}
     $0==b {
-      print ".pact/wave.lock"; print ".pact/cache/"; print ".pact/tmp/"; print "pact-wt/"; print "# --- end PACT ---"
+      print ".pact/wave.lock"; print ".pact/green"; print ".pact/cache/"; print ".pact/tmp/"; print "pact-wt/"; print "# --- end PACT ---"
     }
   ' "$tmp" > "$gi"
   rm -f "$tmp"

@@ -291,6 +291,7 @@ from the scan and `CLAUDE.md` is appended, not overwritten.
 ```
 # --- PACT (managed) ---
 .pact/wave.lock
+.pact/green
 .pact/cache/
 .pact/tmp/
 pact-wt/
@@ -302,8 +303,8 @@ pact-wt/
 `docs/specs/**`, `docs/decisions/**`, `docs/architecture/**`; `CLAUDE.md`;
 `.claude/settings.json` (the `enabledPlugins` entry).
 
-**Ignored** (transient / per-machine): `.pact/wave.lock`, `.pact/cache/**`,
-`.pact/tmp/**`, `pact-wt/**`.
+**Ignored** (transient / per-machine): `.pact/wave.lock`, `.pact/green`,
+`.pact/cache/**`, `.pact/tmp/**`, `pact-wt/**`.
 
 `pact check` flags a missing managed block, or a `.gitignore` line that excludes
 `.pact/` wholesale (which would break sharing).
