@@ -55,3 +55,8 @@ context7 = {{TEAM_CONTEXT7}}
 
 [design]
 system = "{{DESIGN_SYSTEM}}"   # auto | claude-design | none
+
+[notify]
+sound   = "off"     # off | attention (waits + failures) | all (+ turn end, wave settled)
+method  = "auto"    # auto (system sound, else terminal bell) | bell | command
+command = ""        # method = "command": a shell line per event; {event} is substituted

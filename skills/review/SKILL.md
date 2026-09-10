@@ -66,8 +66,8 @@ if any pass returned it or any CRITICAL finding exists; else `PASS`.
 - **NEEDS_FIXES**:
   - Auto-fix `low` / `medium` per `[review].auto_fix`, then re-run the affected
     checks.
-  - CRITICAL / HIGH -> back to a targeted `pact build <story>` (or list them for
-    the user).
+  - CRITICAL / HIGH -> `pact notify fail`, then back to a targeted
+    `pact build <story>` (or list them for the user).
   - A charter violation -> Option B: show it, offer "proceed anyway", log to
     `.pact/charter-overrides.log` on confirmation.
 - `review_gate` on + `NEEDS_FIXES` unresolved -> `ship` stays blocked.

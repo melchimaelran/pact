@@ -44,6 +44,9 @@ covers the commands.
 | `team.depth` | `basic` `standard` `max` | how many expert/guide skills to generate |
 | `team.context7` | bool | fetch version-specific framework docs (token cost) |
 | `design.system` | `auto` `claude-design` `none` | UI design source — `auto` uses the official frontend-design plugin if present, else `.pact/design.md` |
+| `notify.sound` | `off` `attention` `all` | play a sound so you can step away — `off`; `attention` = only input waits and failures; `all` = also each turn end and settled build wave |
+| `notify.method` | `auto` `bell` `command` | `auto` = a system sound if one is found, else the terminal bell; `bell` forces the bell; `command` runs `notify.command` |
+| `notify.command` | string | for `method = command` — a shell line run per event, with `{event}` (`done` `wait` `wave` `fail`) substituted |
 
 ---
 
@@ -157,3 +160,8 @@ pact-wt/
 - **`PreToolUse`** (while `ship`, `build`, `fix`, `spec` run) — blocks any
   `git` / `gh` command carrying an AI-authorship trailer or footer. It matches
   the trailer forms only.
+- **`Stop`** and **`Notification`** — play a sound (`scripts/notify.sh`) when a
+  turn finishes and when PACT is waiting on you. Off unless `notify.sound` is
+  set; `attention` limits it to the waits and to failures. Backgrounded, silent,
+  never fails a turn. `build` and `review` also call `pact notify` when a wave
+  settles or an escalation needs you. Set `PACT_NOTIFY=off` to mute everywhere.

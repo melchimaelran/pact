@@ -17,6 +17,15 @@ that on-disk layout only happens on a major version.
   plus the `spec -> plan -> build -> ship` spine; `/pact:help <command>` prints
   one command's syntax and full description. Script-rendered (`scripts/help.sh`),
   zero model tokens, works before `/pact:init`. The command count is now 16.
+- **Sound notifications** — a short sound when a turn finishes, when PACT is
+  waiting on you, when a build wave settles, and on an escalation (QA loop
+  exhausted, unresolvable conflict, review `NEEDS_FIXES`, failed verification
+  gate). New `Stop` / `Notification` hooks plus `pact notify` calls from `build`
+  and `review`, all via `scripts/notify.sh` — backgrounded, zero model tokens,
+  can never delay or fail a turn. Off by default; opt in with `[notify].sound`
+  (`attention` = waits + failures, `all` = everything), `[notify].method`
+  (`auto` system sound / terminal `bell` / your own `command`). `PACT_NOTIFY=off`
+  mutes it everywhere. The `[notify]` block is optional — no schema bump.
 
 ### Changed
 - README restructured as a pitch-first entry point (~190 lines). The exhaustive
