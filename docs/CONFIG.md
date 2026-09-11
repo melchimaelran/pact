@@ -142,14 +142,16 @@ pact-wt/
   user-level or project-level). It renders
 
   ```
-  PACT [full] myapp · SP-003 contact-section 2/3 · wt: 01-03
+  Sonnet 5 | myapp | /home/user/myapp | ctx:23% | tokens:230839 | PACT [full] myapp · SP-003 contact-section 2/3 · wt: 01-03
   ```
 
-  colored flow mode, project name, active spec/slug, stories done/total, and
-  any live worktrees. Model, cwd, and context-window usage aren't repeated
-  here — Claude Code's own footer renders those alongside a custom
-  `statusLine` (it doesn't replace it), always. Prints nothing outside a PACT
-  project, so a user-level install is safe everywhere. Costs no model tokens.
+  model · folder · full path · context-window usage (green/yellow/red by
+  threshold) · total tokens, then — inside a PACT project — a colored PACT
+  segment: flow mode, project name, active spec/slug, stories done/total, and
+  any live worktrees. The base segment (model/path/ctx/tokens) always renders;
+  the PACT segment only inside a PACT project. A user-level install is a sane
+  baseline everywhere. Costs no model tokens — pure shell against the JSON
+  Claude Code already hands the command on stdin.
 
 ---
 
