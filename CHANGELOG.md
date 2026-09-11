@@ -11,6 +11,15 @@ that on-disk layout only happens on a major version.
 
 ## [Unreleased]
 
+### Changed
+- **Statusline reverted to PACT-only, now colored.** v0.3.0 had
+  `scripts/statusline.sh` render model / cwd / context-window usage —
+  redundant, since Claude Code's own footer already shows those alongside a
+  custom `statusLine` (it doesn't replace it). The line is back to PACT state
+  only (flow mode, project, spec/story/worktree progress), with ANSI color
+  (flow mode bracket colored by mode, bold labels). Prints nothing outside a
+  PACT project, as before v0.3.0.
+
 ## [0.3.0] — 2026-09-11
 
 ### Added

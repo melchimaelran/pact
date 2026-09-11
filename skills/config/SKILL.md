@@ -34,10 +34,11 @@ cannot set it). Ask: user-level (`~/.claude/settings.json`) or project-level
 ```
 
 Refuse to overwrite an existing `statusLine` unless the user passes / confirms
-`--force`. Back the file up first. The script always renders model / dir /
-context-window usage; it adds the PACT segment (flow mode, project, spec/story
-progress) only inside a PACT project — so a user-level install is safe
-everywhere and never goes blank outside PACT.
+`--force`. Back the file up first. The script renders a colored PACT-only
+segment (flow mode, project, spec/story progress) and stays silent outside a
+PACT project — a user-level install is safe everywhere. Model / dir /
+context-window usage aren't repeated: Claude Code's own footer already shows
+them alongside a custom `statusLine`, not in place of it.
 
 ### `project expand`
 

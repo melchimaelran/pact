@@ -1,48 +1,44 @@
 #!/bin/sh
-# Main status line renderer. Reads the Claude Code statusline JSON on stdin
-# and prints one line: model, dir, context-window usage — plus, inside a PACT
-# project, flow mode, project name, and the spec/story/worktree progress.
-# Zero model tokens: pure shell against JSON Claude Code already handed it.
+# Main status line renderer. Claude Code's own footer already shows model,
+# cwd, and context-window usage (it renders alongside a custom statusLine,
+# not instead of it) — this line stays PACT-only: flow mode, project name,
+# spec/story/worktree progress, colored. Prints nothing outside a PACT
+# project. Zero model tokens: pure shell against the JSON Claude Code hands
+# the command on stdin.
 #
 # Install into user or project settings.json via `/pact:config statusline install`.
-# If you already have a statusLine, pipe the same stdin through this and splice
-# its output in as one segment.
 set -eu
 
 dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 . "$dir/lib.sh"
 
 json=$(cat)
-
-model=$(printf '%s' "$json" | pact_json_get display_name)
 cwd=$(printf '%s' "$json" | pact_json_get cwd)
-pct=$(printf '%s' "$json" | pact_json_get used_percentage)
-
 [ -n "$cwd" ] && [ "$cwd" != null ] && [ -d "$cwd" ] && cd "$cwd" 2>/dev/null || true
 
-segs=''
-[ -n "$model" ] && [ "$model" != null ] && segs="$model"
-
-if [ -n "$cwd" ] && [ "$cwd" != null ]; then
-  short="${cwd##*/}"
-  segs="${segs:+$segs · }$short"
-fi
-
-if [ -n "$pct" ] && [ "$pct" != null ]; then
-  pct_i=$(printf '%.0f' "$pct" 2>/dev/null) || pct_i=$pct
-  segs="${segs:+$segs · }ctx ${pct_i}%"
-fi
-
 d=$(pact_dir 2>/dev/null || true)
-if [ -n "$d" ]; then
-  root=$(pact_project_root)
-  proj="${root##*/}"
-  flow=$(pact_toml_get_in "$d/config.toml" mode flow 2>/dev/null || true)
-  segs="${segs:+$segs · }PACT${flow:+ [$flow]} $proj"
+[ -n "$d" ] || exit 0
 
-  spec=$(sh "$dir/status.sh" --oneline 2>/dev/null || true)
-  spec="${spec#PACT }"
-  [ -n "$spec" ] && segs="${segs} · ${spec}"
-fi
+root=$(pact_project_root)
+proj="${root##*/}"
+flow=$(pact_toml_get_in "$d/config.toml" mode flow 2>/dev/null || true)
 
-printf '%s\n' "$segs"
+bold=$(printf '\033[1m');  reset=$(printf '\033[0m')
+cyan=$(printf '\033[36m'); dim=$(printf '\033[2m')
+yellow=$(printf '\033[33m'); blue=$(printf '\033[34m')
+
+case "$flow" in
+  full) mcolor=$yellow ;;
+  lite) mcolor=$blue ;;
+  *)    mcolor=$dim ;;
+esac
+
+line="${bold}${cyan}PACT${reset}"
+[ -n "$flow" ] && [ "$flow" != null ] && line="$line ${mcolor}[${flow}]${reset}"
+line="$line ${bold}${proj}${reset}"
+
+spec=$(sh "$dir/status.sh" --oneline 2>/dev/null || true)
+spec="${spec#PACT }"
+[ -n "$spec" ] && line="$line ${dim}·${reset} $spec"
+
+printf '%s\n' "$line"

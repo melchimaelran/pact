@@ -1077,23 +1077,22 @@ There is no hand-written roadmap. `pact status` renders the same picture live.
   plugin may set `subagentStatusLine`.
 - **Main status line** requires writing user/project `settings.json`, which a
   plugin cannot do. `init` offers it (`[y/N]`); otherwise
-  `pact config statusline install`. It parses the JSON Claude Code pipes to a
-  `statusLine` command on stdin (model, cwd, `context_window.used_percentage`)
-  and, when `.pact/` is present, layers PACT state on top; outside a PACT
-  project it still renders the model/dir/context baseline (no PACT branding),
-  so a global install is safe. It refuses to overwrite an existing `statusLine`
-  without `--force`.
+  `pact config statusline install`. Claude Code's own footer (model, cwd,
+  `context_window.used_percentage`, tokens) renders alongside a custom
+  `statusLine` — it does not replace it — so PACT's line stays PACT-only:
+  colored flow mode, project, spec/story/worktree state, parsed from
+  `.pact/`. Prints nothing outside a PACT project, so a global install is
+  safe. It refuses to overwrite an existing `statusLine` without `--force`.
 
 Shape:
 
 ```
-Sonnet 5 · myapp · ctx 34% · PACT [full] myapp  SP-003 contact-section  2/3 stories  → spec/SP-003  ⚙ 01-03
+PACT [full] myapp  SP-003 contact-section  2/3 stories  → spec/SP-003  ⚙ 01-03
 ```
 
-Model · dir · context-window usage · flow mode + project name (PACT projects
-only) · current spec + slug · stories done/total · active worktrees. Rendered by
-the terminal — zero model tokens, no extra process beyond the shell parsing the
-JSON it's already handed.
+Colored flow mode + project name · current spec + slug · stories done/total ·
+active worktrees. Rendered by the terminal — zero model tokens, no extra
+process beyond the shell parsing the JSON it's already handed.
 
 ---
 
