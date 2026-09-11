@@ -8,7 +8,7 @@
     {
       "name": "pact",
       "source": "./",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "description": "Spec-driven software-engineering methodology: spec -> plan -> build -> ship, with TDD, dependency-ordered parallel waves, decision records, and an on-demand security audit."
     }
   ]

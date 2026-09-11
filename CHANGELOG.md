@@ -11,6 +11,8 @@ that on-disk layout only happens on a major version.
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-09-11
+
 ### Changed
 - **Statusline, colored.** `scripts/statusline.sh` now always renders a
   colored base segment — model, folder, full path, context-window usage
