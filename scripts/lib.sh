@@ -47,6 +47,35 @@ pact_toml_get_in() {
   ' "$_f"
 }
 
+# Naive scalar extractor for the Claude Code statusline JSON (compact or
+# pretty-printed) piped in on stdin: prints the first "key" found, string or
+# raw (number/bool/null) value. Not a real parser — only safe for flat field
+# names that are unique across the payload (e.g. "display_name", "cwd",
+# "used_percentage"; NOT "name", which repeats). Usage:
+# printf '%s' "$json" | pact_json_get key
+pact_json_get() {
+  _k=$1
+  tr -d '\n' | awk -v k="\"$_k\"" '
+    {
+      n = index($0, k)
+      if (n == 0) next
+      rest = substr($0, n + length(k))
+      sub(/^[[:space:]]*:[[:space:]]*/, "", rest)
+      if (substr(rest, 1, 1) == "\"") {
+        rest = substr(rest, 2)
+        e = index(rest, "\"")
+        print substr(rest, 1, e - 1)
+      } else {
+        match(rest, /^[^,}]*/)
+        v = substr(rest, RSTART, RLENGTH)
+        sub(/[[:space:]}]+$/, "", v)
+        print v
+      }
+      exit
+    }
+  '
+}
+
 # The project's declared .pact schema number (default 0 when unset/absent).
 pact_schema() {
   d=$(pact_dir) || { echo 0; return; }

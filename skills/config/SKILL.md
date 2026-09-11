@@ -34,8 +34,10 @@ cannot set it). Ask: user-level (`~/.claude/settings.json`) or project-level
 ```
 
 Refuse to overwrite an existing `statusLine` unless the user passes / confirms
-`--force`. Back the file up first. The script prints nothing outside a PACT
-project, so a user-level install is safe everywhere.
+`--force`. Back the file up first. The script always renders model / dir /
+context-window usage; it adds the PACT segment (flow mode, project, spec/story
+progress) only inside a PACT project — so a user-level install is safe
+everywhere and never goes blank outside PACT.
 
 ### `project expand`
 
