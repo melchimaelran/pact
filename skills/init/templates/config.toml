@@ -37,8 +37,8 @@ effort         = "high"
 
 [review]
 effort      = "{{REVIEW_EFFORT}}"   # quick | standard | deep
-model       = "auto"
-passes      = 1
+model       = "{{REVIEW_MODEL}}"    # auto | haiku | fable | sonnet | opus
+passes      = {{REVIEW_PASSES}}     # deep only; clamped 2-3 (correctness/security[/architecture])
 auto_fix    = "low"                 # off | low | low+medium
 fresh_suite = {{REVIEW_FRESH_SUITE}}
 
