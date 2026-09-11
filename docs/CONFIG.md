@@ -177,7 +177,8 @@ pact-wt/
 A short sound so you can start a long parallel `build` and step away. **Off by
 default** — nothing plays until you turn it on.
 
-**Turn on** — either:
+**Turn on** — `/pact:init` asks for it up front (Block 1, default `off`); after
+that, either:
 
 - `/pact:config` in a session: *"turn on sounds"*, *"notify me on failures"*,
   *"play a sound when it needs me"*; or

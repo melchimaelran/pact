@@ -11,6 +11,33 @@ that on-disk layout only happens on a major version.
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-09-11
+
+### Added
+- **Stack runtime versioning** — `stack.toml` gains `version_manager`
+  (`fnm`/`nvm`/`volta`/`asdf`/`mise`/`pyenv`/`rbenv`/`none`) and `version_file`
+  (`.nvmrc`, `.tool-versions`, …); `runtime` now recommends an exact pinned
+  version instead of a bare major. `/pact:init`'s stack block asks for it
+  (skipped where version-insensitive, e.g. Go/Rust) and detects it from an
+  existing pin file in ADOPT. Optional keys — no schema bump.
+- **Full statusline** — `scripts/statusline.sh` now renders model, current
+  dir, and context-window usage from the JSON Claude Code already pipes to a
+  `statusLine` command, always, not just inside a PACT project. Inside one, it
+  layers flow mode (`[lite]` / `[full]`), project name, and the spec/story/
+  worktree progress on top.
+- **`review` on by default in `lite`** — previously off (`build`'s per-story
+  QA was the only check). Both modes now default `review.effort` to `deep`,
+  with `passes` clamped to 2–3 — one per focus (correctness/security/
+  architecture), no 4th to hand out. `lite`: 2 passes, `haiku`, advisory (no
+  `review_gate`). `full`: 3 passes, `sonnet` (was `auto`), `review_gate` stays
+  on.
+- `/pact:init`'s existing-docs scan (ADOPT) also looks for PRD/requirements/
+  architecture docs, and asks where a missing expected doc lives instead of
+  inferring project intent.
+- `/pact:init` Block 1 now asks for sound notifications (`off` default /
+  `attention` / `all`) up front — previously only reachable after the fact via
+  `/pact:config`.
+
 ## [0.2.0] — 2026-09-10
 
 ### Added

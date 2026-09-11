@@ -240,7 +240,8 @@ Fully conversational. The user never edits a config file by hand. Blocks, in ord
 
 1. **Base** — communication language (`en` / `fr` / `es` / `de` / `pt` / `it` /
    `ja` / `zh` / `ko` / free text; default `en`) · flow mode (`lite` / `full`) ·
-   new-or-adopt confirmation if ambiguous.
+   sound notifications (`off` default / `attention` / `all`, `method` left
+   `auto`) · new-or-adopt confirmation if ambiguous.
 2. *(existing-docs scan runs here)*
 3. **Project context** → `project.md` — what the app does (1–3 sentences) · domain
    and users · main capabilities · tech→role map · external systems · hard

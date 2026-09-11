@@ -1,6 +1,6 @@
 {
   "name": "pact",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Pragmatic, Agent-Controlled, Terminal-based — a spec-driven software-engineering methodology for Claude Code: spec -> plan -> build -> ship, with TDD, dependency-ordered parallel waves, and decision records.",
   "author": {
     "name": "melchimaelran",

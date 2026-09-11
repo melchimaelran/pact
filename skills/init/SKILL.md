@@ -69,6 +69,9 @@ when the answers depend on each other.
 - **Communication language** — `en` (default) / `fr` / `es` / `de` / `pt` / `it` /
   `ja` / `zh` / `ko` / free text.
 - **Flow mode** — `lite` (spine only) / `full` (adds governance + quality layers).
+- **Sound notifications** — `off` (default) / `attention` (waits + failures) /
+  `all` (+ turn end, each settled build wave). `method` stays `auto` (system
+  sound, else terminal bell); tune it later with `/pact:config` if needed.
 
 ### Block 3 — project context  (-> `project.md`)
 
