@@ -47,9 +47,11 @@ Effort from `--effort` or `[review].effort`:
 
 - `quick` -> 1 pass, checks 1–2 only (AC coverage + consistency).
 - `standard` -> 1 pass, the full checklist.
-- `deep` -> `--passes` (or `[review].passes`, min 2) independent `reviewer`
-  agents with focuses `correctness` / `security` / `architecture`, `model:` from
-  `[review].model` (or `advanced`). Announce the fan-out decision.
+- `deep` -> `--passes` (or `[review].passes`) independent `reviewer` agents,
+  clamped to 2–3 — there are only three focuses to hand out. One focus per
+  pass, in priority order `correctness` / `security` / `architecture`; 2 passes
+  drops `architecture`. `model:` from `[review].model` (or `advanced`).
+  Announce the fan-out decision.
 
 Each `reviewer` gets: the spec, the plan, the spec-branch diff vs the target
 branch, the constitution, `project.md`, `accepted` DRs, its focus, and the return

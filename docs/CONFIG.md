@@ -16,7 +16,7 @@ covers the commands.
 | `language.communication` | `en` `fr` `es` `de` `pt` `it` `ja` `zh` `ko` or free text | the language the agent talks to you in |
 | `mode.flow` | `lite` `full` | the spine only, or the spine plus governance/quality layers |
 | `steps.constitution` | bool | the charter is active and gated (`full`) or advisory (`lite`) |
-| `steps.review` | bool | `/pact:review` exists and, with `review_gate`, blocks `ship` |
+| `steps.review` | bool | `/pact:review` exists and, with `review_gate`, blocks `ship` — on by default in both modes (light settings in `lite`, no `review_gate` there) |
 | `steps.team` | bool | `/pact:team` generates project-tailored skills |
 | `steps.design_docs` | bool | `/pact:design` maintains `docs/architecture/` |
 | `steps.issue_tracking` | bool | GitHub Issues integration (github only) |
@@ -34,9 +34,9 @@ covers the commands.
 | `workflow.default_exec_mode` | `step` `wave` `spec` `flow` `dry` | the default execution mode for a build |
 | `build.model_fast` / `model_balanced` / `model_advanced` | `haiku` `fable` `sonnet` `opus` | the three build tiers |
 | `build.effort` | `high` … | reasoning depth per story |
-| `review.effort` | `quick` `standard` `deep` | how thorough a review is |
-| `review.model` | `auto` or a tier | the reviewer's model |
-| `review.passes` | integer | independent review passes to merge |
+| `review.effort` | `quick` `standard` `deep` | how thorough a review is — default `deep` in both modes |
+| `review.model` | `auto` `haiku` `fable` `sonnet` `opus` | the reviewer's model — default `haiku` in `lite`, `sonnet` in `full` |
+| `review.passes` | integer, 2–3 | independent `deep`-review passes, one focus each (`correctness` / `security` / `architecture`) — default `2` in `lite` (drops `architecture`), `3` in `full` |
 | `review.auto_fix` | `off` `low` `low+medium` | severities the reviewer fixes itself |
 | `review.fresh_suite` | bool | re-run the suite even when `build`'s green still holds |
 | `spec.effort` / `plan.effort` | `high` … | reasoning depth |
@@ -142,7 +142,7 @@ pact-wt/
   user-level or project-level). It renders
 
   ```
-  Sonnet 5 · myapp · ctx 34% · PACT full myapp · SP-003 contact-section 2/3 · wt: 01-03
+  Sonnet 5 · myapp · ctx 34% · PACT [full] myapp · SP-003 contact-section 2/3 · wt: 01-03
   ```
 
   model · current dir · context-window usage, then — inside a PACT project —

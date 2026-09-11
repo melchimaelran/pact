@@ -130,9 +130,10 @@ The design keeps a working run lean by construction:
   duplicate proposals across `spec` / `plan` / `build` / `review` (§12).
 - **Progress tracking only where it earns its cost** — long multi-phase commands,
   not short linear ones (§21).
-- **Optional layers are off by default.** `design_docs`, `team`, `review` are
-  opt-in; `lite` is the four-command spine with none of them. No mandatory
-  architecture-doc or expert-skill generation.
+- **Optional layers are off by default, except `review`.** `design_docs` and
+  `team` are opt-in; `lite` is the four-command spine plus a light `review`
+  (§10), with none of the other layers. No mandatory architecture-doc or
+  expert-skill generation.
 - **Reference files are few and dense** (6–8), each read at most once per run.
 
 ---
@@ -269,9 +270,16 @@ Fully conversational. The user never edits a config file by hand. Blocks, in ord
    §14) or later (skeleton, `status: draft`).
 8. **Models & effort** → `config.toml` — `build` model tiers
    (`fast`/`balanced`/`advanced` → `haiku`/`sonnet`/`opus` by default) · `review`
-   (`effort`, `model`, `passes`, `auto_fix`) · `spec` / `plan` effort (default
-   `high`) · `plan` confirmation (`two-pass` default in `full`, `one-pass` default
-   in `lite`).
+   (`effort`, `model`, `passes`, `auto_fix`) — default `deep`, one independent
+   `reviewer` pass per focus (`correctness`/`security`/`architecture`,
+   `passes` clamped 2–3), `model` default `sonnet` · `spec` / `plan` effort
+   (default `high`) · `plan` confirmation (`two-pass` default in `full`,
+   `one-pass` default in `lite`).
+
+`lite` doesn't run Block 7 but still turns `steps.review` on with lighter
+standing defaults: `deep`, `passes = 2` (correctness + security, drops
+architecture), `model = haiku`. Cheap, advisory — `review_gate` stays off in
+`lite`, so a `NEEDS_FIXES` verdict never blocks `ship` there.
 
 ### Scaffold (NEW)
 
@@ -363,11 +371,11 @@ model_fast = "haiku"; model_balanced = "sonnet"; model_advanced = "opus"
 effort = "high"
 
 [review]
-effort       = "standard"   # quick | standard | deep
-model        = "auto"       # auto | haiku | fable | sonnet | opus
-passes       = 1
+effort       = "deep"       # quick | standard | deep
+model        = "sonnet"     # auto | haiku | fable | sonnet | opus — "haiku" in lite
+passes       = 3            # deep only, clamped 2-3 — "2" in lite (drops architecture)
 auto_fix     = "low"        # off | low | low+medium
-fresh_suite  = false        # re-run the full test suite even when build's green still holds (default true in full)
+fresh_suite  = true         # re-run the full test suite even when build's green still holds (default false in lite)
 
 [spec]
 effort = "high"
@@ -998,10 +1006,10 @@ RED-before-GREEN, parallel waves, and Decision Records, always, in both modes.
 | `spec` clarification | leans harder on defaults | asks until no material ambiguity |
 | `plan` | epics + stories + `blocked_by`, minimal detail; one-pass | + edge cases per story, test notes, `## Implementation Tasks`, explicit dependency graph; two-pass |
 | `constitution` | off (advisory if on) | on, gated (Option B) |
-| `review` | off — `build`'s per-story QA is the only check | on, `review_gate` |
+| `review` | on, light (`deep`, 2-pass, `haiku`), advisory — no `review_gate` | on (`deep`, 3-pass, `sonnet`), `review_gate` |
 | `team` / `design_docs` / `issue_tracking` | off | proposed |
 | `preflight` | off | on |
-| model / review effort | conservative defaults | tunable, `deep` review available |
+| model / review effort | conservative build models, light `deep` review | tunable, full `deep` review |
 | verification gate | `steps` | `drive` when tools are available |
 
 Switch any time with `pact config`. Turning `full` on offers a backfill (generate
@@ -1078,7 +1086,7 @@ There is no hand-written roadmap. `pact status` renders the same picture live.
 Shape:
 
 ```
-Sonnet 5 · myapp · ctx 34% · PACT full myapp  SP-003 contact-section  2/3 stories  → spec/SP-003  ⚙ 01-03
+Sonnet 5 · myapp · ctx 34% · PACT [full] myapp  SP-003 contact-section  2/3 stories  → spec/SP-003  ⚙ 01-03
 ```
 
 Model · dir · context-window usage · flow mode + project name (PACT projects

@@ -38,7 +38,7 @@ if [ -n "$d" ]; then
   root=$(pact_project_root)
   proj="${root##*/}"
   flow=$(pact_toml_get_in "$d/config.toml" mode flow 2>/dev/null || true)
-  segs="${segs:+$segs · }PACT ${flow:+$flow }$proj"
+  segs="${segs:+$segs · }PACT${flow:+ [$flow]} $proj"
 
   spec=$(sh "$dir/status.sh" --oneline 2>/dev/null || true)
   spec="${spec#PACT }"

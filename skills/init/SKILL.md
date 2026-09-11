@@ -120,13 +120,16 @@ confirm. NEW: offer a stack preset that fills the commands, or free-form.
 - **full + github only:** issue tracking on/off; if on, GitHub Projects board
   on/off; human approvals required (`min_approvals`, default 0).
 
-### Block 5 — optional toggles  (`full` only; `lite` -> all off, skip this block)
+### Block 5 — optional toggles  (`full` only; `lite` -> all off except `review`, skip this block)
 
 Ask each; none is auto-on:
 
 - `constitution` · `review` · `team` (if on -> also ask `[team].context7`, default
   false) · `design_docs` · `design.system` (`auto` recommended / `claude-design` /
   `none`) · `issue_tracking`.
+
+`lite` skips this block entirely, but `review` is still on — a standing default,
+not a question — with the light settings from Block 7.
 
 ### Block 6 — charter  (only if `constitution = on`)
 
@@ -143,10 +146,17 @@ conventions, the user tweaks.
 ### Block 7 — models & effort  (`full` only; `lite` -> defaults, skip)
 
 - `build` model tiers (defaults `haiku` / `sonnet` / `opus`).
-- `review` effort (`quick` / `standard` / `deep`), `fresh_suite` (default true in
-  full).
+- `review` effort (default `deep`), `passes` (default `3`), `model` (default
+  `sonnet`), `fresh_suite` (default true in full). `deep` runs one independent
+  `reviewer` per pass, each with one focus from `correctness` / `security` /
+  `architecture` in that priority order — `passes` is clamped to 2–3 (2 drops
+  `architecture`).
 - `plan` confirmation (`two-pass` default in `full`, `one-pass` in `lite`).
 - `default_exec_mode` (`wave` default in `full`, `spec` in `lite`).
+
+`lite` review default (not asked, applied at scaffold): `steps.review = true`,
+`effort = deep`, `passes = 2` (correctness + security only), `model = haiku` —
+cheap and light, never `review_gate`-blocking (that stays off in `lite`).
 
 ## Phase 3 — scaffold
 
