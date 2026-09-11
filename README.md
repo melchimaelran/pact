@@ -167,6 +167,25 @@ project.
 For local development of PACT itself, add the marketplace by path:
 `/plugin marketplace add /absolute/path/to/pact`.
 
+## Team workflow
+
+State lives in git — story files, specs, decisions, config — so a teammate who
+pulls `main` sees exactly where every spec stands. Only `.pact/wave.lock`,
+`.pact/green`, `.pact/cache/`, `.pact/tmp/`, and `pact-wt/` are gitignored: all
+transient, regenerated per run.
+
+The active-spec lock (above) is the branch itself: `pact build` refuses a second
+spec while another `spec/<id>` branch is unmerged. That only protects a teammate
+once the branch is pushed, so push it as soon as `build` starts, not at the end.
+
+Generated views (`STORIES_INDEX.md`, `FEATURE_INDEX.md`,
+`docs/decisions/README.md`) are committed and can still conflict like any text
+file on merge or rebase. Don't hand-resolve them — take either side and rerun
+`pact views`.
+
+Nothing stops two people from targeting the same `spec/<id>`; treat it like any
+shared feature branch and agree who's driving before running `build`.
+
 ## Updating
 
 ```
