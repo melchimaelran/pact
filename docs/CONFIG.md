@@ -142,12 +142,15 @@ pact-wt/
   user-level or project-level). It renders
 
   ```
-  PACT SP-003 contact-section 2/3 · wt: 01-03
+  Sonnet 5 · myapp · ctx 34% · PACT full myapp · SP-003 contact-section 2/3 · wt: 01-03
   ```
 
-  the active spec and slug, stories done/total, and any live worktrees. It is
-  drawn by the terminal, costs no model tokens, and prints nothing outside a PACT
-  project — so a user-level install is safe everywhere.
+  model · current dir · context-window usage, then — inside a PACT project —
+  flow mode, project name, active spec/slug, stories done/total, and any live
+  worktrees. Outside a PACT project it still renders the model/dir/context
+  segment (no PACT branding), so a user-level install stays a sane baseline
+  statusline everywhere. Costs no model tokens — it's shell against the JSON
+  Claude Code already hands the command on stdin.
 
 ---
 
