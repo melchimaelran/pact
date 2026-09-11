@@ -246,11 +246,14 @@ Fully conversational. The user never edits a config file by hand. Blocks, in ord
    constraints (optional). ADOPT pre-fills from the scan; the block becomes
    "confirm / correct".
 4. **Stack & environment** → `stack.toml` — languages · frameworks · package
-   manager · runtime · containerized? (compose file path) · env commands
-   (`setup`, `test`, `test_one`, `lint`, `typecheck`, `build`, `dev`) · isolation
-   strategy. ADOPT pre-fills everything from `package.json` scripts, lockfiles,
-   `Dockerfile`, `nest-cli.json`, `pyproject.toml`, etc. NEW offers a stack preset
-   or free-form entry.
+   manager · runtime (pinned exact version) · version manager (`fnm` / `nvm` /
+   `volta` / `asdf` / `mise` / `pyenv` / `rbenv` / `none`, asked only where the
+   runtime is version-sensitive) and its pin file (`.nvmrc`, `.tool-versions`,
+   …) · containerized? (compose file path) · env commands (`setup`, `test`,
+   `test_one`, `lint`, `typecheck`, `build`, `dev`) · isolation strategy. ADOPT
+   pre-fills everything from `package.json` scripts, lockfiles, `Dockerfile`,
+   `nest-cli.json`, `pyproject.toml`, a version-pin file, etc. NEW offers a
+   stack preset or free-form entry.
 5. **VCS & git workflow** → `stack.toml [vcs]` + `config.toml [workflow]` —
    platform (`github` / `gitlab` / `gitea` / `local`); if a remote platform, check
    the CLI is installed and authenticated, else offer `local` · target branch
@@ -388,7 +391,9 @@ system = "auto"          # auto | claude-design | none
 languages       = ["typescript"]
 frameworks      = ["nestjs", "nextjs"]
 package_manager = "pnpm"
-runtime         = "node@22"
+runtime         = "node@22.11.0"
+version_manager = "fnm"           # fnm | nvm | volta | asdf | mise | pyenv | rbenv | none
+version_file    = ".nvmrc"        # "" if none
 monorepo        = false
 
 [env]
