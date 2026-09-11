@@ -44,11 +44,19 @@ Not gated on schema (this command creates the schema). Detect:
 
 ## Phase 1 — existing-docs scan (ADOPT, and NEW if notes were given)
 
-Glob for `CLAUDE.md`, `AGENTS.md`, `README*`, `docs/**/*.md`, `.cursorrules`,
+Glob for `CLAUDE.md`, `AGENTS.md`, `README*`, `docs/**/*.md` (including any
+`PRD*`, `*requirements*`, `*design*`, `*architecture*`), `.cursorrules`,
 `CONTRIBUTING*`, root `*.md`. List what was found. Ask: "Use these as source for
 the project brief and the constitution? [Y/n]". If yes, read them and use them to
 pre-fill Blocks 3 and 6 (citing `Source: <path>` in `project.md`, never copying
 wholesale, never editing the originals).
+
+If a PRD / requirements doc, an architecture doc, or a contributing/style guide
+is expected but absent (ADOPT with no `docs/` at all, or gaps like an
+architecture doc but no PRD), don't fill the gap by inference — name what's
+missing and ask: point to it if it lives elsewhere (a wiki, Notion, a Drive
+doc), paste it, or answer Block 3 from scratch. Never invent project intent to
+paper over a missing doc.
 
 ## Phase 2 — the questionnaire
 
@@ -78,6 +86,15 @@ confirms or corrects.
 ### Block 2 — stack & environment  (-> `stack.toml`)
 
 - Languages, frameworks, package manager, runtime, monorepo?
+- **Runtime version** — exact/pinned when possible (`node@22.11.0`, not just
+  `node@22`).
+- **Version manager** — `fnm` / `nvm` / `volta` / `asdf` / `mise` / `pyenv` /
+  `rbenv` / `none`. ADOPT: detect from a version-pin file (`.nvmrc`,
+  `.node-version`, `.tool-versions`, `.python-version`) or config
+  (`package.json` `engines`, `.fnmrc`) and propose it; confirm. NEW: ask only if
+  the runtime has version-sensitive behavior (Node, Python, Ruby, …) — skip for
+  Go/Rust where it's rarely needed. If set, ask for the pin file path
+  (`version_file`); offer to create it from the chosen runtime version.
 - Containerized (Docker)? If yes, the compose file path.
 - The `[env]` commands: `setup`, `test`, `test_one` (with `{path}`), `lint`,
   `typecheck` (empty = skip), `build`, `dev`, `format` (empty = no auto-format).

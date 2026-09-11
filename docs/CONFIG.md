@@ -57,7 +57,9 @@ covers the commands.
 | `stack.languages` | list, e.g. `["typescript"]` |
 | `stack.frameworks` | list, e.g. `["nestjs", "nextjs"]` |
 | `stack.package_manager` | `pnpm` `npm` `yarn` `bun` `pip` `poetry` `uv` `cargo` `go` … |
-| `stack.runtime` | e.g. `node@22`, `python@3.12` |
+| `stack.runtime` | e.g. `node@22.11.0`, `python@3.12.4` — pin exact when `version_manager` is set |
+| `stack.version_manager` | `fnm` `nvm` `volta` `asdf` `mise` `pyenv` `rbenv` `none` — how the pinned runtime version is enforced across machines |
+| `stack.version_file` | path to the pin file (`.nvmrc`, `.node-version`, `.tool-versions`, `.python-version`); `""` if none |
 | `stack.monorepo` | bool — when true, add a `[stack.packages.<name>]` block per package |
 | `env.containerized` | bool |
 | `env.compose_file` | path to `docker-compose.yml` |

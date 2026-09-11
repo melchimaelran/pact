@@ -4,7 +4,9 @@
 languages       = [{{LANGUAGES}}]      # e.g. "typescript", "python"
 frameworks      = [{{FRAMEWORKS}}]     # e.g. "nestjs", "nextjs"
 package_manager = "{{PACKAGE_MANAGER}}"
-runtime         = "{{RUNTIME}}"        # e.g. node@22, python@3.12
+runtime         = "{{RUNTIME}}"        # e.g. node@22.11.0, python@3.12.4 — pin exact when version_manager is set
+version_manager = "{{VERSION_MANAGER}}"  # fnm | nvm | volta | asdf | mise | pyenv | rbenv | none
+version_file    = "{{VERSION_FILE}}"     # e.g. .nvmrc, .node-version, .tool-versions — "" if none
 monorepo        = {{MONOREPO}}
 
 [env]
